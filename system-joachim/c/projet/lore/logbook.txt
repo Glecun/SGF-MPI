@@ -1,0 +1,32 @@
+-- 2017.1.9
+
+Bon aujourd'hui ça commence mal avec un petit rm * non controlé dans le dossier de test ( heureusement que dans le dossier de test.. ) 
+alors voici le contenue du dossier de test avant la suppression, ( je n'ai que le titre des fichiers)
+
+bin        doTheExit.c  ok      testCreateFullFile    testExecProg.c    testFread    testFWrite.c     testListFileBin.c  testRegex      testTableChar.c  testWriteRead
+cmdline    makefile     projet  testCreateFullFile.c  testExitSystem    testFread.c  testFWrite.txt   testPWD            testRegex.c    testViSystem     testWriteRead.c
+doTheExit  myfile       ?:?qq   testExecProg          testExitSystem.c  testFWrite   testListFileBin  testPWD.c          testTableChar  testViSystem.c   testWriteRead.txt
+
+tout ça parce que je voulais supprimer ce fichier ?:?qq.. et a la place de faire "rm *qq", j'ai fait "rm * qq", le petit espace qui fait la différences.. ( j'avais testé de mettre le nom entier la premiere fois mais ça avait pas marcher, même avec des "\".. bizarre.. je sais même pas d'ou il vien ce fichier même si j'ai une vague idée
+
+
+-- 2017.1.8
+
+Bon apparemment jvais devoir creer des variables d'environnement.. parce que ça va pas du tout cette histoire !!
+
+Que se passe t'il quand je fais un rmdir ../<dossier dans lequel je suis actuellement>
+Sur linux, cela fonctionne, le dossier est supprimer, mais nous somme toujours dedans, pwd donne le lien, par contre impossible de creer des fichier dedans.. une fois sortie, impossible d'y rerentrer
+
+
+-- 2017.1.7
+Finalement y a pas de root exploit, vi fait bien son taff de répartition, même si appellée par un programme ayant l'accès root, avec la fonction system)
+Ajout de la fonction partiel ls
+
+-- 2017.1.6
+Est ce que c'est important d'avoir un root exploit dans son programme ? 
+( vu qu'on ajoute vi comme editeur de texte, vi permet l'execution de commande shell avec :!<commande> ... ) 
+
+-- 2017.1.5 
+
+Ajout de la fonction touch partiel..
+
