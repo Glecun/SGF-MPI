@@ -10,3 +10,9 @@ Système de gestion de fichier non distribué
 **Dossier:** system_simple_distribue
 
 Système de gestion de fichier distribué avec un systeme de fichier très simple
+
+**Contenu:**
+* projet.c: Contient toute la parite distribué du programme = gestion des comportements Serveurs/Clients
+* gestionFichier.c & gestionFichier.h: Contient toute les fonctions utiles à la gestion du fichier data.bd.
+* data.bd: Liste des fichiers ainsi que leurs infos: nom de la machine, chemin du fichier, etc...
+* run.sh: Petit script permettant de recompiler et executer le programme dans son ensemble.
