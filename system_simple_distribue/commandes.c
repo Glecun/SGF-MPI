@@ -7,15 +7,14 @@
 #include "utils.h"
 
 // Commande Touch
-void cmd_touch(char cmd[255],int num, char nameMach[MPI_MAX_PROCESSOR_NAME]){
+char* cmd_touch(char* cmd,int num, char nameMach[MPI_MAX_PROCESSOR_NAME]){
 		int match;
+		char* ret = (char *) malloc(sizeof(char)*1024);
 		
 		// vérifie avec regex si la commande est touch
 		char *str_regex = "[ ]*touch[ ]*[-_[:alnum:]]+";
 		match=execRegex(str_regex,cmd);
-		if (match == 0) { 		
-			printf ("Serveur %d: je crée un fichier\n", num);
-			
+		if (match == 0) {			
 			//Récupère le nom du fichier dans la commande
 			char *split, *nameFich;
 			split=strtok(cmd," ");
@@ -28,8 +27,16 @@ void cmd_touch(char cmd[255],int num, char nameMach[MPI_MAX_PROCESSOR_NAME]){
 			//Mise à jour du fichier commun			
 			char chemin[50];
 			strcpy(chemin,nameFich);
-			ajouterLigne(nameMach,chemin);
-			
+			if (ajouterLigne(nameMach,chemin)){
+				strcpy(ret,"fichier crée"); 			// info retour
+			}
+			else{
+				strcpy(ret,"fichier déja existant");	// info retour
+				return ret;
+			}
+				
 			//TODO: brancher le truc de joachim pour creation du fichier réel
+
 		}
+		return ret;
 }

@@ -20,15 +20,15 @@ int ajouterLigne(char newMachine[50], char newChemin[50]) {
 		{
 			perror("Erreur lors de l'ecriture des donnees dans le fichier!!");
 			fclose(f);
-			return -1;
+			return 0;
 		}
 	} else {
-		printf("Ce fichier existe deja\n");
+		return 0;
 	}
 		    
 	fclose(f);
 
-	return 0;
+	return 1;
 }		 
 
 f_Fichier* getLigne(int i) { 
