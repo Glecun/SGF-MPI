@@ -13,6 +13,10 @@ Système de gestion de fichier distribué avec un systeme de fichier très simpl
 
 **Contenu:**
 * projet.c: Contient toute la parite distribué du programme = gestion des comportements Serveurs/Clients
+* commandes.c: Contient le code des commandes à implémenter
+* utils.c: Contient des fonctions diverses
 * gestionFichier.c & gestionFichier.h: Contient toute les fonctions utiles à la gestion du fichier data.bd.
 * data.bd: Liste des fichiers ainsi que leurs infos: nom de la machine, chemin du fichier, etc...
 * run.sh: Petit script permettant de recompiler et executer le programme dans son ensemble.
+
+![alt tag](http://img11.hostingpics.net/pics/634461explication.png)
