@@ -33,4 +33,7 @@ int getNbLignes();
 */
 void supprimerContenu();
 
+/** Vérifier si la ligne n'est pas déja dans le fichier commun
+*/
+int estDansFichier (f_Fichier fich) ;
 

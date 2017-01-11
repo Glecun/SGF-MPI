@@ -14,15 +14,17 @@ int ajouterLigne(char newMachine[50], char newChemin[50]) {
 	strcpy( t1.machine, newMachine );
 	strcpy( t1.chemin, newChemin );
 	
-	//TODO: vérifier si il existe pas déja
-	
-	// écris dans le fichier avec fwrite
-    if(fwrite(&t1, sizeof(f_Fichier), 1, f) != 1) 
-	{
-		perror("Erreur lors de l'ecriture des donnees dans le fichier!!");
-		fclose(f);
-		return -1;
-    }
+	if (!estDansFichier(t1)){
+		// écris dans le fichier avec fwrite
+		if(fwrite(&t1, sizeof(f_Fichier), 1, f) != 1) 
+		{
+			perror("Erreur lors de l'ecriture des donnees dans le fichier!!");
+			fclose(f);
+			return -1;
+		}
+	} else {
+		printf("Ce fichier existe deja\n");
+	}
 		    
 	fclose(f);
 
@@ -71,18 +73,18 @@ f_Fichier* getAllLignes() {
 	
 	// Lis à partir du fichier
 	int i=1;
-	f_Fichier t2;
+	f_Fichier *t2= (f_Fichier*)malloc (sizeof(f_Fichier));;
 	f_Fichier *ret = (f_Fichier*)malloc (Nb_lignes*sizeof(f_Fichier));
 	while(1){
-		if(fread(&t2, sizeof(f_Fichier), 1, f) != 1) {
+		if(fread(t2, sizeof(f_Fichier), 1, f) != 1) {
 			//fin du fichier
 			break;
 		} 
 		fseek(f,i*sizeof(f_Fichier), SEEK_SET);
 		
 		// Crée la structure a renvoyer
-		strcpy( ret[i-1].chemin, t2.chemin );
-		strcpy( ret[i-1].machine, t2.machine );
+		strcpy( ret[i-1].chemin, t2->chemin );
+		strcpy( ret[i-1].machine, t2->machine );
 		
 		i++;
 	}
@@ -120,4 +122,15 @@ void supprimerContenu() {
 	FILE *fc;
 	fc=fopen("data.bd","w");
 	fclose(fc);
+}
+
+int estDansFichier (f_Fichier fich) {
+	f_Fichier *all = getAllLignes();
+	for (int i = 0 ; i < getNbLignes(); i++){
+		//printf("fich.machine %s all[i].machine %s ;; fich.chemin %s all[i].chemin %s \n",fich.machine, all[i].machine,  fich.chemin , all[i].chemin);
+		if(strcmp(fich.machine, all[i].machine)==0 && strcmp(fich.chemin, all[i].chemin)==0){
+			return 1;
+		}
+	}
+	return 0;
 }
