@@ -1,3 +1,21 @@
+-- 2017.1.12
+
+Je pense avoir isolé le probleme, mais je n'arrive pas a le résoudre, il faudrait que je puisse mettre NULL apres la derniere options dans parsing.. 
+Mais je n'y arrive pas.. depuis bien trop longtemps déjà..
+
+-- 2017.1.11
+
+Boucle while infini qui m'as fait perdre 'laccès au serveur..
+En gros, lorsqu'on tape une commande, y a une boucle infini, et si il y a une erreur de programmation ( comme c'était le cas), alors cela écrit sur le stdin, c'est lu interpreter comme une commade en envoie un message d'erreur et ainsi de suite..
+
+-- 2017.1.10
+
+Aujourd'hui avancement sur l'interpretation des commandes. 
+Le fichier de test "testCommandeParsing.c", prend une chaine de charactere, la séparer selon les espace / les quote en faisant attention au \\ et au \".. 
+En creer un tableau de sous chaine de charactere ( qui dorresponderont a [0] commande, [1 - n] options.
+
+
+
 -- 2017.1.9
 
 Bon aujourd'hui ça commence mal avec un petit rm * non controlé dans le dossier de test ( heureusement que dans le dossier de test.. ) 
