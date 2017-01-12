@@ -4,16 +4,80 @@
 #include <unistd.h> // fonction access
 #include <ctype.h> // function isprint
 
+#define PATH_BIN_FILE "/home/joachim/system/c/projet/bin/" 
+
+static int exec_prog (const char argv[256][256])
+{
+
+	pid_t   my_pid;
+
+	if (0 == (my_pid = fork())) {
+		if (-1 == execve(argv[0], (char **)argv , NULL)) {
+			printf("child process execve failed [%m]");
+			return -1;
+		}
+	}                                        	
+
+	return 0;
+}
+
+void  parsing( char * s, char r[256][256], int * c){
+	int i;
+	int isQuoted = -1;
+	int last_cursor = 0;
+	int compteur = 0;
+
+	// printf("%s\n", s);
+
+	for(i=0; i < strlen(s); i++){
+		if(s[i] == '"'){
+			if(i-1 >= 0){
+				if(s[i-1] == '\\'){
+					// printf("\"");
+				} else {
+					isQuoted *= -1;
+				}
+			} else {
+				isQuoted *= -1;
+			}
+		} else {
+			if(s[i] == ' '){
+				if(isQuoted == 1){
+					// printf("%c", s[i]);
+				} else {
+					memcpy(r[compteur], &s[last_cursor], i - last_cursor); // on copie un bout de la strong dans r
+					r[compteur][i - last_cursor] = '\0'; // on marque la fin de la ligne
+					// printf(" --- %d -> %d", last_cursor, i - 1);
+					last_cursor = i + 1;
+					// printf("\n");
+					compteur++;
+				}
+			} else {
+				// printf("%c", s[i]);
+			}
+		}
+	}
+	memcpy(r[compteur], &s[last_cursor], i - last_cursor);
+	r[compteur][i - last_cursor] = '\0'; // on marque la fin de la ligne 
+
+	// printf(" --- %d -> %d", last_cursor, i);
+	// printf("\n");
+	compteur++;
+
+	*c = compteur;
+}
+
+
 int print_y_n(char * s){
 	/**
-	*	Function demandant une question fermé. oui ou non.
-	*	return true ou false
-	*
-	*	Exemple : 
-	*	if(print_y_n("lol ?")){
-	*		printf("oui");
-	*	}
-	**/
+	 *	Function demandant une question fermé. oui ou non.
+	 *	return true ou false
+	 *
+	 *	Exemple : 
+	 *	if(print_y_n("lol ?")){
+	 *		printf("oui");
+	 *	}
+	 **/
 
 	printf("%s [y/n] ", s);
 	char b;
@@ -25,15 +89,15 @@ int print_y_n(char * s){
 		b = getchar();
 	}
 	answer = (int) b;
-	
+
 	while ( (b = getchar()) != '\n' && b != EOF ) { }
 	return (answer == 'y');
 }
 
 char *inputString(FILE* fp, size_t size){
 	/*
-		Alloue dynamiquement la taille de la chaine de charactere.
-	*/
+	   Alloue dynamiquement la taille de la chaine de charactere.
+	 */
 	// source : http://stackoverflow.com/questions/16870485/how-can-i-read-an-input-string-of-unknown-length
 	//The size is extended by the input with the value of the provisional
 	char *str;
@@ -51,14 +115,18 @@ char *inputString(FILE* fp, size_t size){
 	str[len++]='\0';
 
 	return realloc(str, sizeof(char)*len);
-	}
+}
 
 
 int main(int argc, char **argv){
 	int fin_terminal = 0;
 	char * commande; // commandes entrée dans le terminal
+	char split_commande[256][256]; // commande une fois passer a travers parsing()
+	int argc_commande; // nombre de commande..
 	char buffer_string[1024]; // formations des phrases avec snprintf
-	
+	int i;
+	int compteur_while = 0;
+
 	// "constante"
 	char * file_index = "index.jjg";
 	char * file_stockage = "stockage.jjg";	
@@ -67,13 +135,13 @@ int main(int argc, char **argv){
 	int iflags = 0; // initialisation : crée les deux premier fichiers
 	int c; // case variable
 	opterr = 0;
-	
+
 	// on determine les options
 	while ((c = getopt (argc, argv, "i")) != -1){
 		switch (c){
 			case 'i': // initialisation
 				iflags = 1;
-        			break;
+				break;
 			case '?': // cas erreurs
 				if (isprint (optopt))
 					fprintf (stderr, "Unknown option `-%c'.\n", optopt);
@@ -84,7 +152,7 @@ int main(int argc, char **argv){
 				abort ();
 		}
 	}
-	
+
 	if(iflags){ // initialisation
 		//////
 		// on crée les différents fichiers
@@ -106,11 +174,11 @@ int main(int argc, char **argv){
 			}
 		}
 		// réiterer pour file_stockage
-		
+
 		/*
-			snprintf(buffer_string, sizeof(buffer_string), "Fichier : %s existe deja. Le supprimer ?", file_stockage);
-			print_y_n(buffer_string);
-		*/
+		   snprintf(buffer_string, sizeof(buffer_string), "Fichier : %s existe deja. Le supprimer ?", file_stockage);
+		   print_y_n(buffer_string);
+		 */
 
 		// on crée les fichiers
 		FILE *fp = fopen(file_index, "w+"); // contient la liste des fichiers et leur emplacement dans le fichier stockage
@@ -122,11 +190,11 @@ int main(int argc, char **argv){
 		fwrite(&index_last_cursor, sizeof(index_last_cursor), 1, fp);
 		fwrite(&version, sizeof(version), 1, fp);
 		/* 	code pour trouver le premier pointeur
-		fseek(fp, 0, SEEK_SET);
-		unsigned long long aze;
-		fread(&aze, sizeof(aze), 1, fp);
-		printf("ici :: %llu \n", aze);
-		*/
+			fseek(fp, 0, SEEK_SET);
+			unsigned long long aze;
+			fread(&aze, sizeof(aze), 1, fp);
+			printf("ici :: %llu \n", aze);
+		 */
 		fclose(fp);
 		// creation, avec touch de "/" , l'element racine ###		
 
@@ -134,16 +202,33 @@ int main(int argc, char **argv){
 		fclose(fp);
 	}
 
-	while(!fin_terminal){
+	while(!fin_terminal && compteur_while < 10){
+		compteur_while++;
 		// on demande la commande suivante
 		printf("user@machine:pwd$ ");
 		commande = inputString(stdin, 10);
-		
+
 		// on verifie si la personne ne veux pas sortir du terminal
 		if(!strcmp(commande, "exit")){
 			fin_terminal = 1;
-		} else if(!strcmp(commande, "touch")){
-			system("./bin/touch");
+		} else { 
+			parsing(commande, split_commande, &argc_commande);
+			/*
+			   for(i=0; i<argc_commande;i++){
+			   printf("%s\n", split_commande[i]);
+			   }
+			 */
+			char concat[256] = PATH_BIN_FILE;//"/home/joachim/system/c/projet/bin/";
+			strcat(concat, split_commande[0] );
+			printf("%s\n", concat);
+			
+
+
+			for(i=0; i<argc_commande;i++){
+				printf("%s\n", split_commande[i]);
+			}
+
+			exec_prog( split_commande);
 		}
 	}
 

@@ -1,0 +1,44 @@
+-- 2017.01.10
+Regex, compréhension des commandes rentrées, et des options
+mise en place des variables d'environnements
+
+-- 2017.01.11
+Afficher la Liste des commandes dans /bin
+Fin de touch et ls
+
+-- 2017.01.12
+commandes : pwd, cd, rm
+
+-- 2017.01.13
+commandes : mkdir
+
+-- 2017.01.14
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-- 2017.02.02
+
+Présentation du projet.
