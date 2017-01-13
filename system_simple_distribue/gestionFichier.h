@@ -33,6 +33,10 @@ int getNbLignes();
 */
 void supprimerContenu();
 
+/** Supprime la ligne contenant le chemin passé en parametre
+*/
+int supprimerLigne(char chemin[50]);
+
 /** Vérifier si la ligne n'est pas déja dans le fichier commun
 */
 int estDansFichier (f_Fichier fich) ;

@@ -7,36 +7,54 @@
 #include "utils.h"
 
 // Commande Touch
-char* cmd_touch(char* cmd,int num, char nameMach[MPI_MAX_PROCESSOR_NAME]){
+char* cmd_touch(char* cmd, char nameMach[MPI_MAX_PROCESSOR_NAME]){
 	int match;
 	char* ret = (char *) malloc(sizeof(char)*1024); // on sait que ca ne dépassera pas 1024
 	strcpy(ret,"");
 	
+	// Vérifie si ya des fichiers
+	char *str_regex_hasFich = "^[ ]*touch[ ]*$";
+	match=execRegex(str_regex_hasFich,cmd);
+	if (match == 0) {	
+		strcpy(ret,"vous devez renseigner un fichier"); 
+	}
+	
 	// Vérifie avec regex si la commande est touch
-	char *str_regex = "[ ]*touch[ ]*[-_[:alnum:]]+";
+	char *str_regex = "^[ ]*touch[ ]*[ -_[:alnum:]]+$";
 	match=execRegex(str_regex,cmd);
-	if (match == 0) {			
+	if (match == 0) {
+	
 		// Récupère le nom du fichier dans la commande
 		char *split, *nameFich;
-		split=strtok(cmd," ");
-		nameFich=split;
-		do{
-			split=strtok(NULL," ");
-			nameFich=split;
-		} while(split != NULL && (strcmp(split,"touch")==0 || strcmp(split,"")==0) );
-		
-		// Mise à jour du fichier commun			
-		char chemin[50];
-		strcpy(chemin,nameFich);
-		if (ajouterLigne(nameMach,chemin)){
-			strcpy(ret,"fichier crée"); 			// info retour
-		}
-		else{
-			strcpy(ret,"fichier déja existant");	// info retour
-			return ret;
-		}
+		split=strtok(cmd," "); 
+		while(1){
+			do{
+				split=strtok(NULL," ");
+				if (split==NULL) break; // si ya plus de fichiers on quitte
+				nameFich=split;
+			} while((strcmp(split,"touch")==0 || strcmp(split,"")==0) );
+			if (split==NULL) break; // si ya plus de fichiers on quitte
 			
-		// TODO: brancher le truc de joachim pour creation du fichier réel
+			// Mise à jour du fichier commun			
+			char chemin[50];
+			strcpy(chemin,nameFich);
+			if (ajouterLigne(nameMach,chemin)){
+				// info retour
+				if (!strcmp(ret,""))
+					strcpy(ret,"fichier crée"); 	
+				else
+					strcat(ret,"\nfichier crée");
+			}
+			else{
+				// info retour
+				if (!strcmp(ret,""))
+					strcpy(ret,"fichier déja existant");
+				else
+					strcat(ret,"\nfichier déja existant");
+			}
+			// TODO: brancher le truc de joachim pour creation du fichier réel
+			
+		}
 
 	}
 	return ret;
@@ -70,5 +88,58 @@ char* cmd_showdata(char* cmd){
 			strcat(ret,retTmp);
 		}
 	}
+	return ret;
+}
+
+// Commande Rm
+char* cmd_rm(char* cmd){
+	int match;
+	char* ret = (char *) malloc(sizeof(char)*1024); // on sait que ca ne dépassera pas 1024
+	strcpy(ret,"");
+	
+	// Vérifie si ya des fichiers
+	char *str_regex_hasFich = "^[ ]*rm[ ]*$";
+	match=execRegex(str_regex_hasFich,cmd);
+	if (match == 0) {	
+		strcpy(ret,"vous devez renseigner un fichier"); 
+	}
+	
+	// Vérifie avec regex si la commande est touch
+	char *str_regex = "[ ]*rm[ ]*[-_[:alnum:]]+";
+	match=execRegex(str_regex,cmd);
+	if (match == 0) {			
+		// Récupère le nom du fichier dans la commande
+		char *split, *nameFich;
+		split=strtok(cmd," ");	// TODO: faire pour de multiple fichier
+		while(1){
+			do{
+				split=strtok(NULL," ");
+				if (split==NULL) break; // si ya plus de fichiers on quitte
+				nameFich=split;
+			} while((strcmp(split,"touch")==0 || strcmp(split,"")==0) );
+			if (split==NULL) break; // si ya plus de fichiers on quitte
+			
+			// Mise à jour du fichier commun			
+			char chemin[50];
+			strcpy(chemin,nameFich);
+			if (supprimerLigne(chemin)){
+				// info retour
+				if (!strcmp(ret,""))
+					strcpy(ret,"fichier supprimé");
+				else
+					strcat(ret,"\nfichier supprimé");
+			}
+			else{
+				// info retour
+				if (!strcmp(ret,""))
+					strcpy(ret,"fichier inexistant");
+				else				
+					strcat(ret,"\nfichier inexistant");
+			}
+				
+			// TODO: brancher le truc de joachim pour suppression du fichier réel
+		}
+	}
+	
 	return ret;
 }

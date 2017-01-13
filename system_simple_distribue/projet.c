@@ -41,10 +41,10 @@ int main (int argc, char ** argv){
 			printf("user@machine$>");
 			commande = inputString(stdin, 10);
 			
-			// Sortie du programme
-			char *str_regex = "[ ]*exit[ ]*"; //TODO: trouver une regexp qui marche que pour exit avec des espaces ( "xxx exit" ne devrait pas fonctionner par exemple)
+			// Sortie du programme (exit)
+			char *str_regex = "^[ ]*exit[ ]*$";
 			if(!execRegex(str_regex,commande)){ 
-				return 1; //TODO: (facultatif) envoyer un broadcast pour exit les serveurs proprement
+				MPI_Abort(MPI_COMM_WORLD,0);
 			}
 			
 			//On envoi la longueur de la commande
@@ -82,13 +82,19 @@ int main (int argc, char ** argv){
 			MPI_Irecv(commande,length+1,MPI_CHAR,0,tag,MPI_COMM_WORLD,&request);
 			MPI_Wait (&request, &status[1]);
 			
-			// Analyse et traitement des commande
+			// Analyse et traitement des commandes
 			char * retour;
-			retour = cmd_touch(commande,num,nameMach);
+			retour = cmd_touch(commande,nameMach);
 			if (!strcmp(retour,"")){
 				retour = cmd_showdata(commande);
 			}
-
+			if (!strcmp(retour,"")){
+				retour = cmd_rm(commande);
+			}
+			
+			if (!strcmp(retour,"")){
+				retour="Commande inconnue";
+			}
 			//On envoi la longueur du retour
 			lengthRet = strlen(retour);
 			MPI_Send (&lengthRet, 1, MPI_INT, 0, tag, MPI_COMM_WORLD);
@@ -99,7 +105,7 @@ int main (int argc, char ** argv){
 
 	}
 	
-	MPI_Finalize ();
+	MPI_Finalize();
 	
 	return 0;
 }
