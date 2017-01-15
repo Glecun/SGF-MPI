@@ -1,3 +1,11 @@
+-- 2017.1.13
+
+Problème résolu.
+Il n'y a plus de boucle while infini.
+Les forks ne se créent plus eux même.
+
+### a completer
+
 -- 2017.1.12
 
 Je pense avoir isolé le probleme, mais je n'arrive pas a le résoudre, il faudrait que je puisse mettre NULL apres la derniere options dans parsing.. 

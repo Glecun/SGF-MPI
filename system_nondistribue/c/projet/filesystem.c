@@ -3,29 +3,40 @@
 #include <string.h>
 #include <unistd.h> // fonction access
 #include <ctype.h> // function isprint
+#include <sys/wait.h>
 
 #define PATH_BIN_FILE "/home/joachim/system/c/projet/bin/" 
 
-static int exec_prog (const char argv[256][256])
-{
+static int exec_prog (char ** argv){
+	// ok alors, on va tenter d'expliquer.. 
+
+	// d'abord le char **, parce que char ** envoie qu'une valeur, la valeur du pointeur qui pointe sur quelque chose. ( ici c'est sur un tableau de 256 pointeur type char * )
+	// je n'utilise pas de char[256][256] parce que ça enverrais pas une seul valeur mais bien 256 valeur, et on ne peux changer leur valeurs avec une simple initialisation du type "r[2] = NULL", car ce qui sera changer sera la valeur dans la fonctions et non pas celle dans la fonction principale.  
 
 	pid_t   my_pid;
 
-	if (0 == (my_pid = fork())) {
+	if (0 == (my_pid = fork())) {		
 		if (-1 == execve(argv[0], (char **)argv , NULL)) {
-			printf("child process execve failed [%m]");
-			return -1;
+			printf("child process execve failed [%m]\n"); // ### a changer pour avoir un " commande inexistante "..
+			exit(0); // si ça rate, on exit le fork, s'assurant de ne pas avoir le fork du programme continuer la boucle de commande.. ) 
+			return -1; // cette instruction ne sert donc pas
 		}
 	}                                        	
 
 	return 0;
 }
 
-void  parsing( char * s, char r[256][256], int * c){
+void  parsing( char * s, char ** r, int * c){
+	/*
+		Need des commentaires ici !!! 
+		En gros la fonction parsing prend une chaine de charactere s, et la découpe de la bonne façon, la faisait rentrer dans le tableau r. le dernierr valeur du tableau étant NULL.
+	*/
+
 	int i;
 	int isQuoted = -1;
 	int last_cursor = 0;
-	int compteur = 0;
+	int compteur = 0;	
+	char ** buffer = malloc(256 * sizeof(char*)); // buffer des sous chaine de charactere
 
 	// printf("%s\n", s);
 
@@ -45,8 +56,10 @@ void  parsing( char * s, char r[256][256], int * c){
 				if(isQuoted == 1){
 					// printf("%c", s[i]);
 				} else {
-					memcpy(r[compteur], &s[last_cursor], i - last_cursor); // on copie un bout de la strong dans r
-					r[compteur][i - last_cursor] = '\0'; // on marque la fin de la ligne
+					buffer[compteur] = malloc(256 * sizeof(char));
+					memcpy( buffer[compteur], &s[last_cursor], i - last_cursor);
+					buffer[compteur][i - last_cursor] = '\0';
+					r[compteur] = buffer[compteur]; 
 					// printf(" --- %d -> %d", last_cursor, i - 1);
 					last_cursor = i + 1;
 					// printf("\n");
@@ -57,14 +70,28 @@ void  parsing( char * s, char r[256][256], int * c){
 			}
 		}
 	}
-	memcpy(r[compteur], &s[last_cursor], i - last_cursor);
-	r[compteur][i - last_cursor] = '\0'; // on marque la fin de la ligne 
 
+	buffer[compteur] = malloc(256 * sizeof(char)); 
+	memcpy( buffer[compteur], &s[last_cursor], i - last_cursor);
+        buffer[compteur][i - last_cursor] = '\0';
+        r[compteur] = buffer[compteur]; 
+        
+	// printf(" --- %d -> %d", last_cursor, i - 1);
 	// printf(" --- %d -> %d", last_cursor, i);
 	// printf("\n");
 	compteur++;
 
+	r[compteur] = NULL;
+
 	*c = compteur;
+
+	/*
+	i = 0;
+	while(i < 256 && r[i] != NULL){
+		printf("%s\n", r[i]);
+		i++;
+	}
+	*/
 }
 
 
@@ -121,7 +148,7 @@ char *inputString(FILE* fp, size_t size){
 int main(int argc, char **argv){
 	int fin_terminal = 0;
 	char * commande; // commandes entrée dans le terminal
-	char split_commande[256][256]; // commande une fois passer a travers parsing()
+	char ** split_commande = malloc(256*256*sizeof(char)); // commande une fois passer a travers parsing()
 	int argc_commande; // nombre de commande..
 	char buffer_string[1024]; // formations des phrases avec snprintf
 	int i;
@@ -213,25 +240,31 @@ int main(int argc, char **argv){
 			fin_terminal = 1;
 		} else { 
 			parsing(commande, split_commande, &argc_commande);
-			/*
-			   for(i=0; i<argc_commande;i++){
-			   printf("%s\n", split_commande[i]);
-			   }
-			 */
-			char concat[256] = PATH_BIN_FILE;//"/home/joachim/system/c/projet/bin/";
-			strcat(concat, split_commande[0] );
-			printf("%s\n", concat);
 			
-
-
+			/*
 			for(i=0; i<argc_commande;i++){
 				printf("%s\n", split_commande[i]);
 			}
+			*/
+			
+			char concat[256] = PATH_BIN_FILE;//"/home/joachim/system/c/projet/bin/";
+			strcat(concat, split_commande[0] );
+			//printf("%s\n", concat);
+			split_commande[0] = concat;
+			
+
+			/*
+			for(i=0; i<argc_commande;i++){
+				printf("%s\n", split_commande[i]);
+			}
+			*/
 
 			exec_prog( split_commande);
+			int status = 0;
+			wait(&status); // on attend la fin des forks
 		}
 	}
 
-	free(commande); // on libere la place alloué
+	free(commande); // on libere la place alloué pour la commande
 	return EXIT_SUCCESS;
 }
