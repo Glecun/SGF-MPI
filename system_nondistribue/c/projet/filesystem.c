@@ -5,7 +5,8 @@
 #include <ctype.h> // function isprint
 #include <sys/wait.h>
 
-#define PATH_BIN_FILE "/home/joachim/system/c/projet/bin/" 
+#include "constante.h"
+#include "get_env.h"
 
 static int exec_prog (char ** argv){
 	// ok alors, on va tenter d'expliquer.. 
@@ -211,17 +212,16 @@ int main(int argc, char **argv){
 		FILE *fp = fopen(file_index, "w+"); // contient la liste des fichiers et leur emplacement dans le fichier stockage
 		fseek(fp, 0, SEEK_SET); // on remet le curseur au début du fichier
 		// on calcul le pointeur a partir duquel on peux écrire ( en nombre d'octet)
-		unsigned long long index_last_cursor= 8 + 1; // long long pour forcer a 8 octet, de base sur linux un simple long aurait suffit..
+		unsigned long long index_last_cursor= 8 + 1 + 8 + 3 + 3*8 + 3*255; // long long pour forcer a 8 octet, de base sur linux un simple long aurait suffit..
 		char version = 1; // version a 1 //  ### changer en fonction d'une option
+		unsigned long long dossier_parent = 0;
+
 		// on écris le pointeur vers la derniere ligne disponible (sur 64 bit), suivis d'un indicateur de version (8 bit) 
 		fwrite(&index_last_cursor, sizeof(index_last_cursor), 1, fp);
 		fwrite(&version, sizeof(version), 1, fp);
-		/* 	code pour trouver le premier pointeur
-			fseek(fp, 0, SEEK_SET);
-			unsigned long long aze;
-			fread(&aze, sizeof(aze), 1, fp);
-			printf("ici :: %llu \n", aze);
-		 */
+		fwrite(&dossier_parent, sizeof(dossier_parent), 1, fp);
+		// maintenant au cas ou.. pour la suite on prévoie.. on met 3 char, 3 unsigned longlong et 3 char 255
+		fseek(fp, 3 + 3*8 + 3*255, SEEK_CUR);
 		fclose(fp);
 		// creation, avec touch de "/" , l'element racine ###		
 
@@ -259,7 +259,7 @@ int main(int argc, char **argv){
 			}
 			*/
 
-			exec_prog( split_commande);
+			exec_prog(split_commande);
 			int status = 0;
 			wait(&status); // on attend la fin des forks
 		}
