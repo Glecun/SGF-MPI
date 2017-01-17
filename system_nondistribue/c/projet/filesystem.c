@@ -229,7 +229,10 @@ int main(int argc, char **argv){
 		fclose(fp);
 	}
 
-	while(!fin_terminal && compteur_while < 10){
+	// réinitialisation ?
+	set_parent((unsigned long long) 0); // on remet le curseur a 0
+
+	while(!fin_terminal && compteur_while < 20){
 		compteur_while++;
 		// on demande la commande suivante
 		printf("user@machine:pwd$ ");

@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "../constante.h"
+#include "../get_env.h"
 
 int main(int argc, char **argv){
 	/**
@@ -33,7 +34,8 @@ int main(int argc, char **argv){
 		
 		// valeur a rajouter dans le fichier
 		char active = 1; // octet active
-		unsigned long long parent = 0; // parent est envoyé en argument de l'executable, pour le moment se sera 0 // ### a changer
+		unsigned long long parent; // parent est envoyé en argument de l'executable, pour le moment se sera 0 // ### a changer
+		get_parent(&parent);
 		char type_file = 1; // type de fichier, 1 = fichier (parce que touch), 0 pour un dossier 
 		char file_name[255]; // le nom du fichier // ### quand un ficheir est creer avec touch, on n'écris rien dans stockage.jjg, dés qu'il y a du contenue on remplacera cette valeur..
 		unsigned long long cursor_stock = 0; // adresse a laquelle se trouve le fichier dans stockage.jjg // ### a changer, aller chercher la valeur dans le fichier stockage.jjg
