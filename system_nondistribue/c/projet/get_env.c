@@ -37,3 +37,17 @@ void get_parent( unsigned long long * p){
 	(*p) = parent;
 	fclose(fp);
 };
+
+void set_parent( unsigned long long parent){
+	FILE *fp = fopen(FILE_INDEX, "r+");
+                                                                      	
+	if(fp == NULL){
+		printf("Fichier non trouver, ou acces non permis.\n");
+	}
+
+	fseek(fp, 9, SEEK_SET); // on passe le cursor et la version
+
+	fwrite(&parent, sizeof(parent), 1, fp);
+
+	fclose(fp);
+};

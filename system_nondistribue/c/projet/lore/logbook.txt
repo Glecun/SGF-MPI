@@ -1,3 +1,14 @@
+-- 2017.1.17
+
+ls/cd/mkdir/touch/rm font maintenant état du dossier dans lequels il se trouve
+nous pouvons maintenant utliser cd ..
+creer des fichier, les supprimer, creer des répertoire, naviguer dans ces repertoires et afficher le contenue des repertoire
+
+-- 2017.1.16
+
+Mise en palce des variables d'envirronnement.
+Travaus sur quelques commande..
+
 -- 2017.1.13
 
 Problème résolu.
