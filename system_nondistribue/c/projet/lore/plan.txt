@@ -11,11 +11,13 @@ Afficher la Liste des commandes dans /bin
 	## Done.. mais je sais pas si ça va servir
 Fin de touch et ls
 	## Done
+	## A faire : interdire a touch de creer des ficheir ayant déjà ce nom.
+		## Done
 
 -- 2017.01.12
 commandes : 
 	pwd
-
+		## Done
 	 cd
 		## Done
 	del
@@ -25,23 +27,20 @@ commandes :
 commandes : 
 	mkdir
 		## Done
+		## A faire : interdire a mkdir de creer des dossier ayant le même nom qu'un autre dossier
+			## Done
 	rmdir
 
 -- 2017.01.14
 
-
-
-
+	rename 
+		## Done
 --
 
 	Il faudrait faire du distribuer au bout d'un moment.. jdis ça te reste 15 jours..
 
 
 --
-
-
-
-
 
 
 

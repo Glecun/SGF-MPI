@@ -7,3 +7,4 @@ ls: ls.c ../get_env.c
 touch: touch.c ../get_env.c
 mkdir: mkdir.c ../get_env.c
 del: del.c ../get_env.c
+rename: rename.c ../get_env.c
