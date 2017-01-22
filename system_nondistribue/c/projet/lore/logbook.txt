@@ -1,3 +1,13 @@
+-- 2017.1.19
+
+Commande : touch et mkdir, verifient maitnenant si il existe un autre dossier/fichier ayant ce nom.
+Commande rename ajouté, permet de renommer un fichier ou un dossier.
+	- fait attention a ce que le fichier source existe, et que le fichier de destination n'existe pas.
+
+-- 2017.1.18
+
+Mise en place de la commande pwd, permettant de savoir dans quel répertoire on se trouve. ( en mode absolu)
+
 -- 2017.1.17
 
 ls/cd/mkdir/touch/rm font maintenant état du dossier dans lequels il se trouve

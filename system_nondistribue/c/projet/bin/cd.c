@@ -4,11 +4,6 @@
 #include "../constante.h"
 #include "../get_env.h"
 
-/**
-	A faire : 
-		- gerer le .. , retour au dossier parent
-**/
-
 int main(int argc, char ** argv){
 
 	if(argc < 2){
