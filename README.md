@@ -4,7 +4,7 @@ Implémentation en MPI d'un système de gestion de fichiers distribué partagé 
 ## Système de fichiers non-distribué
 **Dossier:** system_nondistribue
 
-Système de gestion de fichier non distribué
+Système de gestion de fichier non distribué avec un systemede fichier complexe
 
 ## Système de fichiers très simplifié distribué
 **Dossier:** system_simple_distribue
@@ -19,4 +19,13 @@ Système de gestion de fichier distribué avec un systeme de fichier très simpl
 * data.bd: Liste des fichiers ainsi que leurs infos: nom de la machine, chemin du fichier, etc...
 * run.sh: Petit script permettant de recompiler et executer le programme dans son ensemble.
 
+**Organisation du Code**
 ![alt tag](http://img11.hostingpics.net/pics/634461explication.png)
+
+**Explication Fonctionnelle**
+![alt tag](http://img15.hostingpics.net/pics/184417explicationsFonctionnelle1.png)
+
+## Système de fichiers complexe distribué
+**Dossier:** ???
+**Explication Fonctionnelle**
+![alt tag](http://img15.hostingpics.net/pics/717274explicationsFonctionnelle2.png)
