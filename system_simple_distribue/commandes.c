@@ -41,52 +41,22 @@ char* cmd_touch(char* cmd, char nameMach[MPI_MAX_PROCESSOR_NAME]){
 			if (ajouterLigne(nameMach,chemin)){
 				// info retour
 				if (!strcmp(ret,""))
-					strcpy(ret,"fichier crée"); 	
+					strcpy(ret,"fichier crée\0"); 	
 				else
-					strcat(ret,"\nfichier crée");
+					strcat(ret,"\nfichier crée\0");
 			}
 			else{
 				// info retour
 				if (!strcmp(ret,""))
-					strcpy(ret,"fichier déja existant");
+					strcpy(ret,"fichier déja existant\0");
 				else
-					strcat(ret,"\nfichier déja existant");
+					strcat(ret,"\nfichier déja existant\0");
 			}
-			// TODO: brancher le truc de joachim pour creation du fichier réel
+			
+			// TODO: Renseigner le code pour creation du fichier réel
 			
 		}
 
-	}
-	return ret;
-}
-
-// Commande Show data
-char* cmd_showdata(char* cmd){
-	int match;
-	char* ret = (char *) malloc(sizeof(char)*1024); //1024 initialement
-	strcpy(ret,"");
-	
-	// Vérifie avec regex si la commande est show data
-	char *str_regex = "[ ]*show data[ ]*";
-	match=execRegex(str_regex,cmd);
-	if (match == 0) {
-		// On recupere toutes les lignes du fichier
-		f_Fichier *dataFich = getAllLignes();
-		// On met les entetes
-		strcpy(ret,"Num\tMachine\tChemin \n");
-		// Variable temporaire
-		char* retTmp=(char *) malloc(sizeof(char)*1024);
-		for (int i = 0 ; i < getNbLignes(); i++){	
-			// On realloue dynamiquement la variable temporaire (au cas ou la ligne dépasse 1024)
-			int lenghtRetTmp = snprintf( NULL, 0, "%d\t%s\t%s \n",i, dataFich[i].machine, dataFich[i].chemin );
-			retTmp=realloc(retTmp , lenghtRetTmp + 1 );
-			sprintf( retTmp, "%d\t%s\t%s \n",i, dataFich[i].machine, dataFich[i].chemin);
-			
-			// On concatene en reallouant dynamiquement la variable temporaire(ligne) à la variable de retour
-			int lenghtRet = snprintf( NULL, 0, " %s %s \n",ret, retTmp );
-			ret=realloc(ret , lenghtRet + 1 );
-			strcat(ret,retTmp);
-		}
 	}
 	return ret;
 }
@@ -125,21 +95,53 @@ char* cmd_rm(char* cmd){
 			if (supprimerLigne(chemin)){
 				// info retour
 				if (!strcmp(ret,""))
-					strcpy(ret,"fichier supprimé");
+					strcpy(ret,"fichier supprimé\0");
 				else
-					strcat(ret,"\nfichier supprimé");
+					strcat(ret,"\nfichier supprimé\0");
 			}
 			else{
 				// info retour
 				if (!strcmp(ret,""))
-					strcpy(ret,"fichier inexistant");
+					strcpy(ret,"fichier inexistant\0");
 				else				
-					strcat(ret,"\nfichier inexistant");
+					strcat(ret,"\nfichier inexistant\0");
 			}
 				
-			// TODO: brancher le truc de joachim pour suppression du fichier réel
+			// TODO: Renseigner le code pour suppression du fichier réel
+			
 		}
 	}
 	
+	return ret;
+}
+
+// Commande Show data
+char* cmd_showdata(char* cmd){
+	int match;
+	char* ret = (char *) malloc(sizeof(char)*1024); //1024 initialement
+	strcpy(ret,"");
+	
+	// Vérifie avec regex si la commande est show data
+	char *str_regex = "[ ]*show data[ ]*";
+	match=execRegex(str_regex,cmd);
+	if (match == 0) {
+		// On recupere toutes les lignes du fichier
+		f_Fichier *dataFich = getAllLignes();
+		// On met les entetes
+		strcpy(ret,"Num\tMachine\tChemin \n");
+		// Variable temporaire
+		char* retTmp=(char *) malloc(sizeof(char)*1024);
+		for (int i = 0 ; i < getNbLignes(); i++){	
+			// On realloue dynamiquement la variable temporaire (au cas ou la ligne dépasse 1024)
+			int lenghtRetTmp = snprintf( NULL, 0, "%d\t%s\t%s \n",i, dataFich[i].machine, dataFich[i].chemin );
+			retTmp=realloc(retTmp , lenghtRetTmp + 1 );
+			sprintf( retTmp, "%d\t%s\t%s \n",i, dataFich[i].machine, dataFich[i].chemin);
+			
+			// On concatene en reallouant dynamiquement la variable temporaire(ligne) à la variable de retour
+			int lenghtRet = snprintf( NULL, 0, " %s %s \n",ret, retTmp );
+			ret=realloc(ret , lenghtRet + 1 );
+			strcat(ret,retTmp);
+		}
+	}
 	return ret;
 }
