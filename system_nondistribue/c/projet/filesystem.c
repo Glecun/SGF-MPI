@@ -192,27 +192,35 @@ int main(int argc, char **argv){
 		// on verifie que des fichiers n'ont pas déjà ce nom
 		if( access( file_index, F_OK ) != -1 ) { // si il existe // ### faire sous forme de fonction
 			// en gros snprintf permet de placer des variables dans une chaine de la même façon que printf, sauf que ça ne l'affiche pas ça forme la chaine
-			snprintf(buffer_string, sizeof(buffer_string), "Fichier : %s existe deja. Le supprimer ?", file_index);
+			snprintf(buffer_string, sizeof(buffer_string), "fichier : %s existe deja. le supprimer ?", file_index);
 			if(print_y_n(buffer_string)){ // on supprime le fichier si oui
 				if(remove(file_index) == 0){
-					printf("Fichier %s a ete supprimer.\n", file_index);
+					printf("fichier %s a ete supprimer.\n", file_index);
 				} else {
-					printf("Error : Fichier %s non supprimer", file_index);
+					printf("error : fichier %s non supprimer.\n", file_index);
 				}
 			}
 		}
-		// réiterer pour file_stockage
 
-		/*
-		   snprintf(buffer_string, sizeof(buffer_string), "Fichier : %s existe deja. Le supprimer ?", file_stockage);
-		   print_y_n(buffer_string);
-		 */
+		if( access( file_stockage, F_OK ) != -1 ) { // si il existe // ### faire sous forme de fonction
+                	snprintf(buffer_string, sizeof(buffer_string), "fichier : %s existe deja. le supprimer ?", file_stockage);
+                	if(print_y_n(buffer_string)){ // on supprime le fichier si oui
+                		if(remove(file_stockage) == 0){
+                			printf("fichier %s a ete supprimer.\n", file_stockage);
+                		} else {
+                			printf("error : fichier %s non supprimer.\n", file_stockage);
+                		}
+                	}
+                }
 
 		// on crée les fichiers
 		FILE *fp = fopen(file_index, "w+"); // contient la liste des fichiers et leur emplacement dans le fichier stockage
 		fseek(fp, 0, SEEK_SET); // on remet le curseur au début du fichier
 		// on calcul le pointeur a partir duquel on peux écrire ( en nombre d'octet)
 		unsigned long long index_last_cursor= 8 + 1 + 8 + 3 + 3*8 + 3*255; // long long pour forcer a 8 octet, de base sur linux un simple long aurait suffit..
+
+
+
 		char version = 1; // version a 1 //  ### changer en fonction d'une option
 		unsigned long long dossier_parent = 0;
 
@@ -226,13 +234,16 @@ int main(int argc, char **argv){
 		// creation, avec touch de "/" , l'element racine ###		
 
 		fp = fopen(file_stockage, "w+"); // contient le contenu des fichiers
+		fseek(fp, 0, SEEK_SET);
+		unsigned long long stock_last_cursor = 8;
+		fwrite(&stock_last_cursor, sizeof(stock_last_cursor), 1, fp);
 		fclose(fp);
 	}
 
 	// réinitialisation ?
 	set_parent((unsigned long long) 0); // on remet le curseur a 0
 
-	while(!fin_terminal && compteur_while < 20){
+	while(!fin_terminal && compteur_while < 100){
 		compteur_while++;
 		// on demande la commande suivante
 		printf("user@machine:pwd$ ");
