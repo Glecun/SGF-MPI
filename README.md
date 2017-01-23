@@ -20,12 +20,16 @@ Système de gestion de fichier distribué avec un systeme de fichier très simpl
 * run.sh: Petit script permettant de recompiler et executer le programme dans son ensemble.
 
 **Organisation du Code**
+
 ![alt tag](http://img11.hostingpics.net/pics/634461explication.png)
 
 **Explication Fonctionnelle**
+
 ![alt tag](http://img15.hostingpics.net/pics/184417explicationsFonctionnelle1.png)
 
 ## Système de fichiers complexe distribué
 **Dossier:** ???
+
 **Explication Fonctionnelle**
+
 ![alt tag](http://img15.hostingpics.net/pics/717274explicationsFonctionnelle2.png)
