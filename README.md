@@ -37,3 +37,9 @@ Système de gestion de fichier distribué avec un systeme de fichier très simpl
 **Explication Fonctionnelle**
 
 ![alt tag](http://img15.hostingpics.net/pics/717274explicationsFonctionnelle2.png)
+
+## Pour aller plus loin
+* Ajouter de la redondance de données afin pour faire de la tolérance aux pannes
+  * Faire une étude sur le nombre minimun de copies à réaliser 
+* En prenant compte du nombre de demandes et leur sources, faire un placement intelligent en prenant en compte la topologie du réseau: vitesse, latence, débit, etc...
+* Rendre le projet multi-serveur, c'est à dire que plusieurs serveur écrivent dans le fichier d'index. 
