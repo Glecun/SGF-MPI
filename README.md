@@ -6,6 +6,10 @@ Implémentation en MPI d'un système de gestion de fichiers distribué partagé 
 
 Système de gestion de fichier non distribué avec un systemede fichier complexe
 
+**Explication Fonctionnelle**
+
+![alt tag](http://img15.hostingpics.net/pics/860033explicationsFonctionnelle0.png)
+
 ## Système de fichiers très simplifié distribué
 **Dossier:** system_simple_distribue
 
