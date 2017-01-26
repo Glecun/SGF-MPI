@@ -4,10 +4,6 @@
 #include "../constante.h"
 #include "../get_env.h"
 
-/**
-	A faire : 
-**/
-
 int main(int argc, char ** argv){
 
 	FILE *fp = fopen(FILE_INDEX, "r");
@@ -30,25 +26,26 @@ int main(int argc, char ** argv){
 	char type_file;
 	char file_name[255];
 	char char_type_file;
-	
-	printf("cursor : %llu\n", cursor_tmp);
+	unsigned long long file_size;
 
 	while(cursor_tmp < cursor_end){
-
 		fread(&active, sizeof(active), 1, fp);
 		fread(&tmp_parent, sizeof(tmp_parent), 1, fp);
 		fread(&type_file, sizeof(type_file), 1, fp);
-		if(active && tmp_parent == parent){ // on verifie que c'est un fichier, qu'il est actif, et qu'il est bien dans le repertoire courant
+		if(active && tmp_parent == parent){ // on verifie qu'il est actif, et qu'il est bien dans le repertoire courant
 			fread(file_name, sizeof(file_name), 1, fp);
 			// on affiche les infos 
 			if(type_file){ // fichier
+				fseek(fp, sizeof(unsigned long long), SEEK_CUR); // on saute l'endroit ou est stocké le fichier
+				fread(&file_size, sizeof(file_size), 1, fp);
 				char_type_file = 'f';	
+				
 			} else {
 				char_type_file = 'd';
+				file_size = 1; // on met file_size a 0
 			}
 			
-			printf("%c - %s\n", char_type_file, file_name);
-			
+			printf("%c\t%s\t%llu\n", char_type_file, file_name, file_size); // ### peut être plus de différence sur file_size.. un if en plus..
 		}
 
 		if(type_file){

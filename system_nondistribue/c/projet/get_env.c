@@ -102,7 +102,8 @@ void set_parent( unsigned long long parent){
 
 unsigned long long file_exist(char arg_type_file, char * arg_file_name){
 	/*
-	   Préviens si un fichier|dossier existe de nom file_name 
+		Préviens si un fichier|dossier existe de nom file_name
+		retourne la valeur du curseur de debut si le fichier exist, sinon renvoie 0 
 	 */
 
 	FILE *fp = fopen(FILE_INDEX, "r");
