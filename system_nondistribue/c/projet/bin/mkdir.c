@@ -5,10 +5,6 @@
 #include "../get_env.h"
 
 int main(int argc, char **argv){
-	/**
-	 *	Argument : mkdir NomDeDossier
-	 *	### ajouter parent
-	 **/
 
 	if(argc < 2){
 		printf("Usage : mkdir <foldername>\n");
@@ -25,8 +21,6 @@ int main(int argc, char **argv){
 
 	fseek(fp, 0, SEEK_SET);
 	fread(&cursor, sizeof(cursor), 1, fp);
-
-	// printf("valeur = %llu \n", cursor);
 
 	fseek(fp, cursor, SEEK_SET);
 
@@ -50,7 +44,7 @@ int main(int argc, char **argv){
 	} else {	
 		// on ajoute les valeurs
 		fwrite(&active,sizeof(active), 1, fp); // on met rend active la ligne 
-		fwrite(&parent,sizeof(parent), 1, fp); // on écris le parent ### pas encore fait
+		fwrite(&parent,sizeof(parent), 1, fp); // on écris le parent
 		fwrite(&type_file,sizeof(type_file), 1, fp); 
 		fwrite(file_name,sizeof(file_name), 1, fp); 
 
