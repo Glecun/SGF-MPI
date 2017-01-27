@@ -1,3 +1,31 @@
+-- 2017.27
+
+Clean des fichiers : 
+	- cd #Done
+	- del #Done
+	- ls ~50%
+	- mkdir
+	- pwd
+	- rename #Done
+	- touch
+	- vim
+
+-- 2017.1.26
+
+Clean des fichiers : 
+	- cd #Done
+	- del #Done
+	- ls ~50%
+	- mkdir
+	- pwd
+	- rename
+	- touch
+	- vim
+
+--
+
+Y a eu du taff non loggué là.. probablement trouvable sur le github.
+
 -- 2017.1.19
 
 Commande : touch et mkdir, verifient maitnenant si il existe un autre dossier/fichier ayant ce nom.

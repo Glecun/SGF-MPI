@@ -240,6 +240,16 @@ int main(int argc, char **argv){
 		fclose(fp);
 	}
 
+	if( access( file_index, R_OK|W_OK ) == -1 ) { // si il existe pas
+		printf("le fichier \"%s\" n'existe pas, ou pas de droits sur le fichier.\n", file_index);
+		return 1;
+	}
+	
+	if( access( file_stockage, R_OK|W_OK ) == -1 ) { // si il existe pas
+        	printf("le fichier \"%s\" n'existe pas, ou pas de droits sur le fichier.\n", file_stockage);
+        	return 1;
+        }
+
 	// réinitialisation ?
 	set_parent((unsigned long long) 0); // on remet le curseur a 0
 
