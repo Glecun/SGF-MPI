@@ -7,7 +7,6 @@
 int main(int argc, char **argv){
 	/**
 	 *	Argument : rename f|d NomSource Nomdestination
-	 *	### ajouter parent
 	 **/
 
 	// Usage	
@@ -23,8 +22,7 @@ int main(int argc, char **argv){
 
 	// valeur a rajouter dans le fichier
 	unsigned long long parent; // parent est envoyé en argument de l'executable, pour le moment se sera 0 // ### a changer
-	get_parent(&parent);
-	char type_file = 1; // type de fichier, 1 = fichier (parce que touch), 0 pour un dossier 
+	char type_file; // type de fichier, 1 = fichier (parce que touch), 0 pour un dossier 
 	char file_name_src[255]; // le nom du fichier // ### quand un ficheir est creer avec touch, on n'écris rien dans stockage.jjg, dés qu'il y a du contenue on remplacera cette valeur..
 	char file_name_dest[255];
 
@@ -36,7 +34,7 @@ int main(int argc, char **argv){
 	} else if(argv[1][0] == 'f'){
 		type_file = FICHIER;
 	} else {
-		printf("Sois c'est f, sois c'est d..\n");
+		printf("Sois c'est f, sois c'est d..\n"); // ### ?
 		return EXIT_FAILURE;
 	}
 
@@ -46,7 +44,7 @@ int main(int argc, char **argv){
 		if(file_exist(type_file, file_name_dest) != 0){
 			printf("Le fichier %s existe déjà\n", file_name_dest);	
 		} else {
-		fseek(fp, parent + 1 + 8 + 1, SEEK_SET);	
+		fseek(fp, parent + 1 + 8 + 1, SEEK_SET); // on va a l'endroit ou se trouve le nom du fichier	
 		fwrite(file_name_dest,sizeof(file_name_dest), 1, fp); 
 		}
 	} else {	
