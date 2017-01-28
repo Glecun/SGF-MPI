@@ -45,15 +45,11 @@ int main(int argc, char ** argv){
 				file_size = 1; // on met file_size a 0
 			}
 			
-			printf("%c\t%s\t%llu\n", char_type_file, file_name, file_size); // ### peut être plus de différence sur file_size.. un if en plus..
+			// ### peut être plus de différence sur file_size.. un if en plus..
+			printf("%c\t%s\t%llu\n", char_type_file, file_name, file_size);
 		}
 
-		if(type_file){
-			cursor_tmp += 1+8+1+255+8+8;
-		} else {
-			cursor_tmp += 1+8+1+255;
-		}
-
+		cursor_tmp += INDEX_LINE_SIZE;
 		fseek(fp, cursor_tmp, SEEK_SET); // on place le curseur au bon endroit pour la suite ( parce qu'on ne lis pas tout.. surtout si c'est un fichier..
 
 	}

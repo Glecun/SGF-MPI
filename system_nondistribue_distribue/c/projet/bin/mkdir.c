@@ -46,10 +46,10 @@ int main(int argc, char **argv){
 		fwrite(&active,sizeof(active), 1, fp); // on met rend active la ligne 
 		fwrite(&parent,sizeof(parent), 1, fp); // on écris le parent
 		fwrite(&type_file,sizeof(type_file), 1, fp); 
-		fwrite(file_name,sizeof(file_name), 1, fp); 
+		fwrite(file_name,sizeof(file_name), 1, fp);
 
 		// on remet le cuseur de debut de fichier de index.jjg a la nouvelle valeur
-		cursor += 1 + 8 + 1 + 255;
+		cursor += INDEX_LINE_SIZE;
 		fseek(fp, 0, SEEK_SET); // on se remet au début
 		fwrite(&cursor, sizeof(cursor), 1, fp);
 	}

@@ -46,7 +46,7 @@ int main(int argc, char **argv){
 			fread(&file_cursor_stock, sizeof(file_cursor_stock), 1, fp);
 			fread(&file_size, sizeof(file_size), 1, fp);
 
-			char concat[4096];                                                           			
+			char concat[4096];                                                         			
                         strcat(concat, PATH_FOLDER_SWAP); // on met le chemin vers le dossier de swap
                         strcat(concat, file_name); // on rajoute le nom du fichier
                         strcat(concat, ".swp");  // on rajotue l'extension .swp
