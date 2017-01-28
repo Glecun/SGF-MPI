@@ -1,0 +1,107 @@
+-- 2017.27
+
+Clean des fichiers : 
+	- cd #Done
+	- del #Done
+	- ls ~50%
+	- mkdir
+	- pwd
+	- rename #Done
+	- touch
+	- vim
+
+-- 2017.1.26
+
+Clean des fichiers : 
+	- cd #Done
+	- del #Done
+	- ls ~50%
+	- mkdir
+	- pwd
+	- rename
+	- touch
+	- vim
+
+--
+
+Y a eu du taff non loggué là.. probablement trouvable sur le github.
+
+-- 2017.1.19
+
+Commande : touch et mkdir, verifient maitnenant si il existe un autre dossier/fichier ayant ce nom.
+Commande rename ajouté, permet de renommer un fichier ou un dossier.
+	- fait attention a ce que le fichier source existe, et que le fichier de destination n'existe pas.
+
+-- 2017.1.18
+
+Mise en place de la commande pwd, permettant de savoir dans quel répertoire on se trouve. ( en mode absolu)
+
+-- 2017.1.17
+
+ls/cd/mkdir/touch/rm font maintenant état du dossier dans lequels il se trouve
+nous pouvons maintenant utliser cd ..
+creer des fichier, les supprimer, creer des répertoire, naviguer dans ces repertoires et afficher le contenue des repertoire
+
+-- 2017.1.16
+
+Mise en palce des variables d'envirronnement.
+Travaus sur quelques commande..
+
+-- 2017.1.13
+
+Problème résolu.
+Il n'y a plus de boucle while infini.
+Les forks ne se créent plus eux même.
+
+### a completer
+
+-- 2017.1.12
+
+Je pense avoir isolé le probleme, mais je n'arrive pas a le résoudre, il faudrait que je puisse mettre NULL apres la derniere options dans parsing.. 
+Mais je n'y arrive pas.. depuis bien trop longtemps déjà..
+
+-- 2017.1.11
+
+Boucle while infini qui m'as fait perdre 'laccès au serveur..
+En gros, lorsqu'on tape une commande, y a une boucle infini, et si il y a une erreur de programmation ( comme c'était le cas), alors cela écrit sur le stdin, c'est lu interpreter comme une commade en envoie un message d'erreur et ainsi de suite..
+
+-- 2017.1.10
+
+Aujourd'hui avancement sur l'interpretation des commandes. 
+Le fichier de test "testCommandeParsing.c", prend une chaine de charactere, la séparer selon les espace / les quote en faisant attention au \\ et au \".. 
+En creer un tableau de sous chaine de charactere ( qui dorresponderont a [0] commande, [1 - n] options.
+
+
+
+-- 2017.1.9
+
+Bon aujourd'hui ça commence mal avec un petit rm * non controlé dans le dossier de test ( heureusement que dans le dossier de test.. ) 
+alors voici le contenue du dossier de test avant la suppression, ( je n'ai que le titre des fichiers)
+
+bin        doTheExit.c  ok      testCreateFullFile    testExecProg.c    testFread    testFWrite.c     testListFileBin.c  testRegex      testTableChar.c  testWriteRead
+cmdline    makefile     projet  testCreateFullFile.c  testExitSystem    testFread.c  testFWrite.txt   testPWD            testRegex.c    testViSystem     testWriteRead.c
+doTheExit  myfile       ?:?qq   testExecProg          testExitSystem.c  testFWrite   testListFileBin  testPWD.c          testTableChar  testViSystem.c   testWriteRead.txt
+
+tout ça parce que je voulais supprimer ce fichier ?:?qq.. et a la place de faire "rm *qq", j'ai fait "rm * qq", le petit espace qui fait la différences.. ( j'avais testé de mettre le nom entier la premiere fois mais ça avait pas marcher, même avec des "\".. bizarre.. je sais même pas d'ou il vien ce fichier même si j'ai une vague idée
+
+
+-- 2017.1.8
+
+Bon apparemment jvais devoir creer des variables d'environnement.. parce que ça va pas du tout cette histoire !!
+
+Que se passe t'il quand je fais un rmdir ../<dossier dans lequel je suis actuellement>
+Sur linux, cela fonctionne, le dossier est supprimer, mais nous somme toujours dedans, pwd donne le lien, par contre impossible de creer des fichier dedans.. une fois sortie, impossible d'y rerentrer
+
+
+-- 2017.1.7
+Finalement y a pas de root exploit, vi fait bien son taff de répartition, même si appellée par un programme ayant l'accès root, avec la fonction system)
+Ajout de la fonction partiel ls
+
+-- 2017.1.6
+Est ce que c'est important d'avoir un root exploit dans son programme ? 
+( vu qu'on ajoute vi comme editeur de texte, vi permet l'execution de commande shell avec :!<commande> ... ) 
+
+-- 2017.1.5 
+
+Ajout de la fonction touch partiel..
+
