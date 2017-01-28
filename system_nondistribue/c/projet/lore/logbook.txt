@@ -1,8 +1,17 @@
--- 2017.27
+-- 2017.1.28
 
 Clean des fichiers : 
-	- cd #Done
-	- del #Done
+	- ls #Done
+	- mkdir #Done
+	- pwd #Done
+	- touch #Done
+	- vim
+
+Correction bug, commandes ne se fermait pas même si le fichier index.jjg ne marche pas
+
+-- 2017.1.27
+
+Clean des fichiers : 
 	- ls ~50%
 	- mkdir
 	- pwd

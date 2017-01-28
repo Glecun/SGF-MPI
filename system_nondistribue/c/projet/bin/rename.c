@@ -18,6 +18,7 @@ int main(int argc, char **argv){
 	FILE *fp = fopen("/home/joachim/system/c/projet/index.jjg","r+"); // r+ c'est read and write, si tu met w, c'est read and write mais ça écrase le fichier
 	if(fp == NULL){
 		printf("Fichier non trouver, ou acces non permis.\n");
+		return EXIT_FAILURE;
 	}
 
 	// valeur a rajouter dans le fichier
