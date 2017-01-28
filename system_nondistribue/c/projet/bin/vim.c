@@ -5,10 +5,7 @@
 #include "../get_env.h"
 
 int main(int argc, char **argv){
-	/**
-	 *	Argument : vim NomDuFichier
-	 **/
-
+	// Usage
 	if(argc < 2){
 		printf("Usage : vim <filename>\n");
 		return EXIT_FAILURE;
@@ -22,7 +19,6 @@ int main(int argc, char **argv){
 
 	unsigned long long cursor;		
 
-	// valeur a rajouter dans le fichier
 	char active; // octet active
 	unsigned long long parent; // parent est envoyé en argument de l'executable, pour le moment se sera 0 // ### a changer
 	get_parent(&parent);
@@ -51,17 +47,15 @@ int main(int argc, char **argv){
                         strcat(concat, file_name); // on rajoute le nom du fichier
                         strcat(concat, ".swp");  // on rajotue l'extension .swp
 
-			// on regarde si le fichier est vide.
-			if(file_cursor_stock == 0) { // le fichier n'as jamais été instancié. Donc on crée le fichier sur le filesystem hôte
-				printf("le fichier n'as pas été instancié .\n");
-				FILE *fp_swp = fopen(concat, "w+"); // on crée le fichier.
+			// on creer le fichier
+                        FILE *fp_swp = fopen(concat, "w+"); // on crée le fichier.
+			fclose(fp_swp);		
 
-				fclose(fp_swp);		
-				
 
-			} else { // le fichier à déjà été instancié , on va devoir écrire dans le .swp, ce qu'il y a déjà d'écrit sur le filesystem
-				
-			}
+			// on regarde si le fichier n'est pas vide, on le remplis. // oué oué ça fait sens
+			//if(file_cursor_stock != 0 && file_size != 0) {
+			extract_file(concat, file_cursor_stock, file_size);					
+			//}
 
 		//	On ouvre le fichier ainsi crée grace a vim
 			char command[4096];
@@ -71,21 +65,19 @@ int main(int argc, char **argv){
 		//	Une fois le fichier éditer, on écrit le résultat dans notre filesystem
 			unsigned long long cursor_stock;
 			get_stock_last_cursor(&cursor_stock);
-			printf("cursor = %llu\n",cursor_stock);
 			put_file(concat,cursor_stock, &file_size);
-			
+		
+			printf("Size = %llu", file_size);
+	
 			// on change le fichier dans index, avec la nouvelle taille et l'endroit ou on le met.. ###
 
-			ajouterLigne(cursor, active, parent, file_type, file_name, file_cursor_stock, file_size);
+			ajouterLigne(cursor, active, parent, file_type, file_name, cursor_stock, file_size);
 		
 		//	On supprimer le fichier dans le filesystem hote
-		
-	
 				
 
-		printf("Le fichier : \"%s\" existe déjà. cursor = %llu \n", file_name, cursor);
 	} else {	
-		printf("Le fichier n'existe pas.\n");
+		printf("Le fichier \"%s\" n'existe pas.\n", file_name);
 	}
 	fclose(fp);
 

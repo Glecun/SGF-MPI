@@ -27,6 +27,7 @@ int main(int argc, char ** argv){
 	char type_file;
 	char file_name[255];
 	char char_type_file;
+	unsigned long long file_cursor_stock;
 	unsigned long long file_size;
 
 	while(cursor_tmp < cursor_end){
@@ -37,7 +38,8 @@ int main(int argc, char ** argv){
 			fread(file_name, sizeof(file_name), 1, fp);
 			// on affiche les infos 
 			if(type_file == FICHIER){ // fichier
-				fseek(fp, sizeof(unsigned long long), SEEK_CUR); // on saute l'endroit ou est stocké le fichier
+				//fseek(fp, sizeof(unsigned long long), SEEK_CUR); // on saute l'endroit ou est stocké le fichier
+				fread(&file_cursor_stock, sizeof(file_cursor_stock), 1, fp);
 				fread(&file_size, sizeof(file_size), 1, fp);
 				char_type_file = 'f';	
 				
@@ -46,7 +48,7 @@ int main(int argc, char ** argv){
 				file_size = 1; // on met file_size a 1..
 			}
 			
-			printf("%c\t%s\t%llu\n", char_type_file, file_name, file_size); // ### peut être plus de différence sur file_size.. un if en plus..
+			printf("%c\t%s\t%llu\t%llu\n", char_type_file, file_name, file_cursor_stock,file_size); // ### peut être plus de différence sur file_size.. un if en plus..
 		}
 
 		if(type_file == FICHIER){

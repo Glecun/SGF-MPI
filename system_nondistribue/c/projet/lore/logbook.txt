@@ -9,6 +9,8 @@ Clean des fichiers :
 
 Correction bug, commandes ne se fermait pas même si le fichier index.jjg ne marche pas
 
+Correction bug, commande rename, gardait un bout de nom, si on passait d'un grad nom de fichier a un petit nom 
+
 -- 2017.1.27
 
 Clean des fichiers : 

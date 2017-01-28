@@ -29,6 +29,10 @@ int main(int argc, char **argv){
 
 	strcpy(file_name_src, argv[2]); // on copie la chaine de charactere dans file_name pour être sur d'avoir les 255 char
 	strcpy(file_name_dest, argv[3]); 
+	int size = strlen(argv[3]);
+	if(size < 255){
+		file_name_dest[size] = '\0';
+	}
 
 	if(argv[1][0] == 'd'){
 		type_file = DOSSIER;
@@ -45,11 +49,11 @@ int main(int argc, char **argv){
 		if(file_exist(type_file, file_name_dest) != 0){
 			printf("Le fichier %s existe déjà\n", file_name_dest);	
 		} else {
-		fseek(fp, parent + 1 + 8 + 1, SEEK_SET); // on va a l'endroit ou se trouve le nom du fichier	
-		fwrite(file_name_dest,sizeof(file_name_dest), 1, fp); 
+			fseek(fp, parent + 1 + 8 + 1, SEEK_SET); // on va a l'endroit ou se trouve le nom du fichier	
+			fwrite(file_name_dest,sizeof(file_name_dest), 1, fp); 
 		}
 	} else {	
-		printf("le fichier %s n'existe pas.", file_name_src);
+		printf("le fichier %s n'existe pas.\n", file_name_src);
 	}
 
 	fclose(fp);
