@@ -67,7 +67,6 @@ int main(int argc, char **argv){
 			get_stock_last_cursor(&cursor_stock);
 			put_file(concat,cursor_stock, &file_size);
 		
-			printf("Size = %llu", file_size);
 	
 			// on change le fichier dans index, avec la nouvelle taille et l'endroit ou on le met.. ###
 

@@ -27,6 +27,29 @@ static int exec_prog (char ** argv){
 	return 0;
 }
 
+void trim(char *str)
+{
+	int i;
+	int begin = 0;
+	int end = strlen(str) - 1;
+
+	while (isspace((unsigned char) str[begin]))
+		begin++;
+
+	while ((end >= begin) && isspace((unsigned char) str[end]))
+		end--;
+
+	// Shift all characters back to the start of the string array.
+	for (i = begin; i <= end; i++)
+		str[i - begin] = str[i];
+
+	str[i - begin] = '\0'; // Null terminate string.
+}
+
+
+
+
+
 void  parsing( char * s, char ** r, int * c){
 	/*
 		Need des commentaires ici !!! 
@@ -60,11 +83,12 @@ void  parsing( char * s, char ** r, int * c){
 					buffer[compteur] = malloc(256 * sizeof(char));
 					memcpy( buffer[compteur], &s[last_cursor], i - last_cursor);
 					buffer[compteur][i - last_cursor] = '\0';
-					r[compteur] = buffer[compteur]; 
-					// printf(" --- %d -> %d", last_cursor, i - 1);
-					last_cursor = i + 1;
-					// printf("\n");
-					compteur++;
+					trim(buffer[compteur]);
+					if(strcmp(buffer[compteur], "") != 0){// si non vide
+						r[compteur] = buffer[compteur]; 
+						last_cursor = i + 1;
+						compteur++;
+					}
 				}
 			} else {
 				// printf("%c", s[i]);
@@ -75,24 +99,15 @@ void  parsing( char * s, char ** r, int * c){
 	buffer[compteur] = malloc(256 * sizeof(char)); 
 	memcpy( buffer[compteur], &s[last_cursor], i - last_cursor);
         buffer[compteur][i - last_cursor] = '\0';
-        r[compteur] = buffer[compteur]; 
-        
-	// printf(" --- %d -> %d", last_cursor, i - 1);
-	// printf(" --- %d -> %d", last_cursor, i);
-	// printf("\n");
-	compteur++;
-
+	trim(buffer[compteur]);
+        if(strcmp(buffer[compteur], "") != 0){// si non vide
+        	r[compteur] = buffer[compteur]; 
+		compteur++;
+	}
 	r[compteur] = NULL;
 
 	*c = compteur;
 
-	/*
-	i = 0;
-	while(i < 256 && r[i] != NULL){
-		printf("%s\n", r[i]);
-		i++;
-	}
-	*/
 }
 
 
