@@ -4,23 +4,53 @@
 #include "gestionFichier.h"
 
 int ajouterLigne(char newMachine[50], char newChemin[50]) {
-    FILE * f = fopen("data.bd", "a"); // ouvre le fichier en mode append
+    FILE * f = fopen("data.bd", "r+"); // ouvre le fichier en mode append
 	if (!f) {
 		perror("ajouterLigne: fopen failed");
 		exit(1);
 	}
 	
-    f_Fichier t1;
+    f_Fichier t1; // a ajouter
 	strcpy( t1.machine, newMachine );
 	strcpy( t1.chemin, newChemin );
 	
+	f_Fichier t2; //contenu du fichier
+	int i=1;
 	if (!estDansFichier(t1)){
-		// écris dans le fichier avec fwrite
-		if(fwrite(&t1, sizeof(f_Fichier), 1, f) != 1) 
-		{
-			perror("Erreur lors de l'ecriture des donnees dans le fichier!!");
-			fclose(f);
-			return 0;
+		
+		// On essaye d'ajouter dans une ligne vide
+		int alreadyAdded=0;
+		while(1){
+			if(fread(&t2, sizeof(f_Fichier), 1, f) != 1) {
+				//fin du fichier
+				break;
+			} 
+			
+			// Si la ligne est vide
+			if (!strcmp(t2.machine,"")){ 
+				// On ajoute ici
+				fseek(f, -sizeof(f_Fichier), SEEK_CUR); // Un pas en arrière
+				if( fwrite( &t1, sizeof(f_Fichier), 1, f) != 1) {
+					perror("Erreur lors de l'ecriture des donnees dans le fichier!!");
+					fclose(f);
+					return 0;
+				}
+				alreadyAdded=1;
+				break;
+			} else {
+				fseek(f,i*sizeof(f_Fichier), SEEK_SET); //on avance que si c'est aps la bonne ligne
+			}
+			
+			i++;
+		}
+				
+		// Si y'avait pas de place dans le fichier on ecrit à la fin
+		if(alreadyAdded!=1) {
+			if(fwrite(&t1, sizeof(f_Fichier), 1, f) != 1) {
+				perror("Erreur lors de l'ecriture des donnees dans le fichier!!");
+				fclose(f);
+				return 0;
+			}
 		}
 	} else {
 		return 0;
@@ -32,7 +62,7 @@ int ajouterLigne(char newMachine[50], char newChemin[50]) {
 }		 
 
 f_Fichier* getLigne(int i) { 
-	// Ouvre le fichier en mode lecture/écriture binaire
+	// Ouvre le fichier en mode lecture binaire
 	FILE * f = fopen("data.bd", "r"); 
 	if (!f) {
 		perror("getLigne: fopen failed");
@@ -59,7 +89,7 @@ f_Fichier* getLigne(int i) {
 }
 
 f_Fichier* getAllLignes() { 
-	// Ouvre le fichier en mode lecture/écriture binaire
+	// Ouvre le fichier en mode lecture binaire
 	FILE * f = fopen("data.bd", "r"); 
 	if (!f) {
 		perror("getAllLignes: fopen failed");
@@ -73,6 +103,7 @@ f_Fichier* getAllLignes() {
 	
 	// Lis à partir du fichier
 	int i=1;
+	int iret=0;
 	f_Fichier *t2= (f_Fichier*)malloc (sizeof(f_Fichier));;
 	f_Fichier *ret = (f_Fichier*)malloc (Nb_lignes*sizeof(f_Fichier));
 	while(1){
@@ -83,9 +114,11 @@ f_Fichier* getAllLignes() {
 		fseek(f,i*sizeof(f_Fichier), SEEK_SET);
 		
 		// Crée la structure a renvoyer
-		strcpy( ret[i-1].chemin, t2->chemin );
-		strcpy( ret[i-1].machine, t2->machine );
-		
+		if (strcmp(t2->machine,"")){
+			strcpy( ret[iret].chemin, t2->chemin );
+			strcpy( ret[iret].machine, t2->machine );
+			iret++;
+		}
 		i++;
 	}
 	fclose(f);
@@ -94,7 +127,7 @@ f_Fichier* getAllLignes() {
 }
 
 int getNbLignes(){
-	// Ouvre le fichier en mode lecture/écriture binaire
+	// Ouvre le fichier en mode lecture binaire
 	FILE * f = fopen("data.bd", "r"); 
 	if (!f) {
 		perror("getNbLignes: fopen failed");
@@ -105,6 +138,7 @@ int getNbLignes(){
 	
 	// Lis à partir du fichier
 	int i=1;
+	int ret=0;
 	f_Fichier t2;
 	while(1){
 		if(fread(&t2, sizeof(f_Fichier), 1, f) != 1) {
@@ -112,10 +146,14 @@ int getNbLignes(){
 			break;
 		} 
 		fseek(f,i*sizeof(f_Fichier), SEEK_SET);
+		
+		if (strcmp(t2.machine,"")){
+			ret++;
+		}
 		i++;
 	}
 	fclose(f);
-	return i-1;
+	return ret;
 }
 
 void supprimerContenu() {
@@ -124,11 +162,57 @@ void supprimerContenu() {
 	fclose(fc);
 }
 
+int supprimerLigne(char chemin[50]) {
+	// Ouvre le fichier en mode lecture/écriture binaire
+	FILE * f = fopen("data.bd", "r+"); 
+	if (!f) {
+		perror("supprimerLigne: fopen failed");
+		exit(1);
+	}
+
+	// Remets le curseur du fichier au début
+	fseek(f, 0, SEEK_SET); 
+	
+	// Lis à partir du fichier
+	int i=1;
+	f_Fichier t2;//= (f_Fichier*)malloc (sizeof(f_Fichier));;
+	int ret = 0;
+	while(1){
+		if(fread(&t2, sizeof(f_Fichier), 1, f) != 1) {
+			//fin du fichier
+			break;
+		} 
+		
+		// Supprime la ligne
+		if (!strcmp(t2.chemin,chemin)){ 
+			fseek(f, -sizeof(f_Fichier), SEEK_CUR); // Un pas en arrière
+			f_Fichier t3;
+			strcpy( t3.machine, "" );
+			strcpy( t3.chemin, "" );
+			if(	fwrite( &t3 , sizeof(f_Fichier) , 1 , f)!= 1) {
+				perror("Erreur lors de l'ecriture des donnees dans le fichier!!");
+				fclose(f);
+				return 0;
+			}
+			
+			ret=1;
+			break;
+		} else {
+			fseek(f,i*sizeof(f_Fichier), SEEK_SET); //on avance que si c'est aps la bonne ligne
+		}
+		
+		i++;
+	}
+	fclose(f);
+
+    return ret;
+}
+
 int estDansFichier (f_Fichier fich) {
 	f_Fichier *all = getAllLignes();
 	for (int i = 0 ; i < getNbLignes(); i++){
 		//printf("fich.machine %s all[i].machine %s ;; fich.chemin %s all[i].chemin %s \n",fich.machine, all[i].machine,  fich.chemin , all[i].chemin);
-		if(strcmp(fich.machine, all[i].machine)==0 && strcmp(fich.chemin, all[i].chemin)==0){
+		if(strcmp(fich.chemin, all[i].chemin)==0){
 			return 1;
 		}
 	}
