@@ -12,6 +12,7 @@ int main(int argc, char ** argv){
 	FILE *fp = fopen(FILE_INDEX, "r");
         if(fp == NULL){
         	printf("Fichier non trouver, ou acces non permis.\n");
+		return EXIT_FAILURE;
         }
 
 	int finish = 0;
@@ -24,10 +25,8 @@ int main(int argc, char ** argv){
 	char concat[4096];
 
 	while(!finish){
-		
 				
 		fread(&active, sizeof(active), 1, fp);
-
 	
 		if(parent == 0){
 			concat[0] = '/'; concat[1] = '\0';
@@ -47,7 +46,6 @@ int main(int argc, char ** argv){
 		
 			strcat(concat, path);
 			strcpy(path, concat); 
-
 			
 			parent = tmp_parent;
 		}

@@ -13,6 +13,7 @@ int main(int argc, char ** argv){
 	FILE *fp = fopen(FILE_INDEX, "r+");
 	if(fp == NULL){
 		printf("Fichier non trouver, ou acces non permis.\n");
+		return EXIT_FAILURE;
 	}
 
 	char folder_name[255];
