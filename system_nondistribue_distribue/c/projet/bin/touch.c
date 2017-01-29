@@ -5,10 +5,6 @@
 #include "../get_env.h"
 
 int main(int argc, char **argv){
-        /**
-         *      Argument : touch NomDeFichier
-         *      ### ajouter parent
-         **/
 
         // Usage
         if(argc < 2){
@@ -19,6 +15,7 @@ int main(int argc, char **argv){
         FILE *fp = fopen(FILE_INDEX,"r+"); // r+ c'est read and write, si tu met w, c'est read and write mais ça écrase le fichier
         if(fp == NULL){
                 printf("Fichier non trouver, ou acces non permis.\n");
+				return EXIT_FAILURE;
         }
 
 

@@ -16,7 +16,7 @@ int main(int argc, char **argv){
 		return EXIT_FAILURE;
 	}
 
-	FILE *fp = fopen("/home/joachim/system/c/projet/index.jjg","r+"); // r+ c'est read and write, si tu met w, c'est read and write mais ça écrase le fichier
+	FILE *fp = fopen(FILE_INDEX,"r+"); // r+ c'est read and write, si tu met w, c'est read and write mais ça écrase le fichier
 	if(fp == NULL){
 		printf("Fichier non trouver, ou acces non permis.\n");
 	}
@@ -29,7 +29,11 @@ int main(int argc, char **argv){
 	char file_name_dest[255];
 
 	strcpy(file_name_src, argv[2]); // on copie la chaine de charactere dans file_name pour être sur d'avoir les 255 char
-	strcpy(file_name_dest, argv[3]); 
+	strcpy(file_name_dest, argv[3]);
+	int size = strlen(argv[3]);
+	if(size < 255){
+		file_name_dest[size] = '\0';
+	}
 
 	if(argv[1][0] == 'd'){
 		type_file = DOSSIER;
@@ -46,11 +50,11 @@ int main(int argc, char **argv){
 		if(file_exist(type_file, file_name_dest) != 0){
 			printf("Le fichier %s existe déjà\n", file_name_dest);	
 		} else {
-		fseek(fp, parent + 1 + 8 + 1, SEEK_SET);	
-		fwrite(file_name_dest,sizeof(file_name_dest), 1, fp); 
+			fseek(fp, parent + 1 + 8 + 1, SEEK_SET);	
+			fwrite(file_name_dest,sizeof(file_name_dest), 1, fp); 
 		}
 	} else {	
-		printf("le fichier %s n'existe pas.", file_name_src);
+		printf("le fichier %s n'existe pas.\n", file_name_src);
 	}
 
 	fclose(fp);

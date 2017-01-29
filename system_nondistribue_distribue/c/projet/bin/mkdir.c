@@ -17,18 +17,13 @@ int main(int argc, char **argv){
 		return EXIT_FAILURE;
 	}
 
-	unsigned long long cursor;		
-
-	fseek(fp, 0, SEEK_SET);
-	fread(&cursor, sizeof(cursor), 1, fp);
-
-	fseek(fp, cursor, SEEK_SET);
+	unsigned long long cursor;
 
 	// valeur a rajouter dans le fichier
 	char active = 1; // octet active
 	unsigned long long parent; // parent est envoyé en argument de l'executable, pour le moment se sera 0 // ### a changer
 	get_parent(&parent);
-	char type_file = 0; // type de fichier, 1 = fichier (parce que touch), 0 pour un dossier 
+	char type_file = DOSSIER; // type de fichier, 1 = fichier (parce que touch), 0 pour un dossier 
 	char file_name[255]; // le nom du fichier // ### quand un ficheir est creer avec touch, on n'écris rien dans stockage.jjg, dés qu'il y a du contenue on remplacera cette valeur..
 
 	strcpy(file_name, argv[1]); // on copie la chaine de charactere dans file_name pour être sur d'avoir les 255 char
@@ -41,7 +36,13 @@ int main(int argc, char **argv){
 
 	if(file_exist(DOSSIER, file_name) != 0){
 		printf("Le dossier : \"%s\" existe déjà.\n", file_name);
-	} else {	
+	} else {
+		
+		//on met le curseur du fichier au bon endroit
+		fseek(fp, 0, SEEK_SET);               		
+		fread(&cursor, sizeof(cursor), 1, fp);
+		fseek(fp, cursor, SEEK_SET);
+		
 		// on ajoute les valeurs
 		fwrite(&active,sizeof(active), 1, fp); // on met rend active la ligne 
 		fwrite(&parent,sizeof(parent), 1, fp); // on écris le parent

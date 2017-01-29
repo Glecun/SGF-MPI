@@ -1,4 +1,5 @@
-void  parsing( char * s, char ** r, int * c);
+void trim(char *str);
+void parsing( char * s, char ** r, int * c);
 int exec_prog (char ** argv);
 int print_y_n(char * s);
 char * inputString(FILE* fp, size_t size);

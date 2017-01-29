@@ -166,11 +166,7 @@ unsigned long long file_exist(char arg_type_file, char * arg_file_name){
                                 }
                         }
                 }
-                if(type_file){
-                        cursor_tmp += 1+8+1+255+8+8;
-                } else {
-                        cursor_tmp += 1+8+1+255;
-                }
+                cursor_tmp += INDEX_LINE_SIZE;
                 fseek(fp, cursor_tmp, SEEK_SET); // on place le curseur au bon endroit pour la suite ( parce qu'on ne lis pas tout.. surtout si c'est un fichier..
         }
 
@@ -222,6 +218,25 @@ void put_file(char * path_filename, unsigned long long cursor_stock, unsigned lo
         fclose(fp_dest);
 }
 
+void extract_file(char * path_filename, unsigned long long cursor_stock, unsigned long long file_size){
+	/*
+		fonction qui prend une partie du fichier stockage, et la met dans le fichier du systeme hôte
+	*/	
+	// on lis l'info dans stockage.jjg
+	FILE *fp_src = fopen(FILE_STOCK, "r");
+	fseek(fp_src, cursor_stock, SEEK_SET);
+	char buffer[file_size];
+	fread(buffer, sizeof(buffer), 1, fp_src);
+	fclose(fp_src);
+
+	// on écris l'info dans le fichier path_filename
+	FILE *fp_dest = fopen(path_filename, "r+");
+	fseek(fp_dest, 0, SEEK_SET);
+	fwrite(buffer, sizeof(buffer), 1, fp_dest);
+	fclose(fp_dest);
+}
+
+
 /**
  * Fonction qui permet de créer une entrée pour un fichier dans le fichier index
  */
@@ -232,15 +247,16 @@ void ajouterLigne(unsigned long long cursor, char active, unsigned long long par
                 printf("Fichier non trouver, ou acces non permis.\n");
         }
 
-        fseek(fp, cursor, SEEK_SET); // on passe le cursor et la version
+        fseek(fp, cursor, SEEK_SET); // on passe le cursor au bon endroit
 
         fwrite(&active, sizeof(active), 1, fp);
         fwrite(&parent, sizeof(parent), 1, fp);
         fwrite(&file_type, sizeof(file_type), 1, fp);
-        fwrite(file_name, sizeof(file_name), 1, fp);
+        fwrite(file_name, sizeof(char) * 255, 1, fp);
         if(file_type == FICHIER){
-                fwrite(&file_cursor_stock, sizeof(file_cursor_stock), 1, fp);
-                fwrite(&file_size, sizeof(file_size), 1, fp);
+			printf("Here : %llu", file_cursor_stock);
+            fwrite(&file_cursor_stock, sizeof(file_cursor_stock), 1, fp);
+            fwrite(&file_size, sizeof(file_size), 1, fp);
         }
 
         fclose(fp);

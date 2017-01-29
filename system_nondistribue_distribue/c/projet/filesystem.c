@@ -4,11 +4,28 @@
 #include <unistd.h> // fonction access
 #include <ctype.h> // function isprint
 #include <sys/wait.h>
+#include <mpi.h>
 
 #include "constante.h"
-#include "get_env.h"
 #include "functions_filesystem.h"
 
+/**
+ * Permet de modifier la valeur du dossier parent de l'environnement de l'utilisateur
+ * @param c - la valeur du nouveau parent
+ */
+void set_parent( unsigned long long parent){
+        FILE *fp = fopen(FILE_INDEX, "r+");
+
+        if(fp == NULL){
+                printf("Fichier non trouver, ou acces non permis.\n");
+        }
+
+        fseek(fp, 9, SEEK_SET); // on passe le cursor et la version
+
+        fwrite(&parent, sizeof(parent), 1, fp);
+
+        fclose(fp);
+};
 
 int main(int argc, char **argv){
 	int fin_terminal = 0;
