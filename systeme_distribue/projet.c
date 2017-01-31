@@ -76,17 +76,19 @@ int main (int argc, char ** argv){
 	
 			//printf("Création du dossier %s\n" , nom_dossier_bdd);
 	
+			// Création du fichier BDD
+			char nom_fichier_bdd [1000]; 
+
+			snprintf( nom_fichier_bdd , 1000 , "%s%s" , nom_dossier_bdd , FILE_NAME_STOCKAGE );
+			//if_file_isset_then_delete( nom_fichier_bdd );
+
 			// Création du dossier contenant le numéro de num
 			if_dir_isset_then_delete( nom_dossier_bdd );
 			mkdir( nom_dossier_bdd , S_IRWXU );
 	
-			// Création du fichier BDD
-			char nom_fichier_bdd [1000]; 
-			snprintf( nom_fichier_bdd , 1000 , "%s%d/%s" , PATH_GLOBAL_DIR , num , FILE_NAME_STOCKAGE );
+			
 	
 			//printf("Création du fichier %s\n" , nom_fichier_bdd);
-	
-			if_file_isset_then_delete( nom_fichier_bdd );
 	
 			fp = fopen(nom_fichier_bdd, "w+"); // contient le contenu des fichiers
 			fseek(fp, 0, SEEK_SET);

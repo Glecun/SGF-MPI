@@ -206,9 +206,11 @@ int remove_directory(char * dirName){
 	DIR *rep;
 	rep = opendir( dirName );
 	while ((lecture = readdir(rep))) {
-		remove(lecture->d_name);
+		char nomFile[4000];
+		snprintf( nomFile , 4000 , "%s%s" , dirName , lecture->d_name );
+		remove(nomFile);
 	}
-	closedir(rep); 
+	closedir(rep);
 	int r = rmdir(dirName);
 	return r;
 }
