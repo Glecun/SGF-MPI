@@ -1,4 +1,4 @@
-#define PATH_GLOBAL_DIR "/export/home/users/ingenieurs/infoAppr2015/11202167/Documents/air3/adp/projet/SGF-MPI-master/system_simple_distribue_v2/"
+#define PATH_GLOBAL_DIR "/home/loupix/system/projet/systeme_distribue/"
 
 #define FILE_NAME_INDEX "index.jjg"
 #define FILE_NAME_STOCKAGE "stockage.jjg"

@@ -76,17 +76,15 @@ int main (int argc, char ** argv){
 	
 			//printf("Création du dossier %s\n" , nom_dossier_bdd);
 	
+			// Création du fichier BDD
+			char nom_fichier_bdd[1000];
+			snprintf(nom_fichier_bdd, 1000, "%s%s", nom_dossier_bdd, FILE_NAME_STOCKAGE);
+
 			// Création du dossier contenant le numéro de num
 			if_dir_isset_then_delete( nom_dossier_bdd );
 			mkdir( nom_dossier_bdd , S_IRWXU );
 	
-			// Création du fichier BDD
-			char nom_fichier_bdd [1000]; 
-			snprintf( nom_fichier_bdd , 1000 , "%s%d/%s" , PATH_GLOBAL_DIR , num , FILE_NAME_STOCKAGE );
-	
 			//printf("Création du fichier %s\n" , nom_fichier_bdd);
-	
-			if_file_isset_then_delete( nom_fichier_bdd );
 	
 			fp = fopen(nom_fichier_bdd, "w+"); // contient le contenu des fichiers
 			fseek(fp, 0, SEEK_SET);
@@ -111,23 +109,34 @@ int main (int argc, char ** argv){
 			printf("user@machine$>");
 			fflush(stdout);
 			if(fgets(commande, 4096, stdin) == NULL){
-				printf("lol");	
-				break;
+				break; // ### TODO a gere un peu plus drastiquement
 			}
 			// on supprime la touche entrée
 			commande[strcspn(commande, "\n")] = 0;
 
 			// on trim la commande
 			trim(commande);
-			
-			// Sortie du programme (exit)
-			char *str_regex = "^[ ]*exit[ ]*$";
-			if(!execRegex(str_regex,commande)){ 
-				MPI_Abort(MPI_COMM_WORLD,0);
+
+			if(!strcmp(commande, "exit")){
+				MPI_Abort(MPI_COMM_WORLD, 0);
+			} else if(!strcmp(commande, "")){
+				continue;
+			}
+
+			// on découpe la commande en argument que l'on stocke dans split_commande
+			parsing(commande, split_commande, &argc_commande);
+
+			if(!strcmp(split_commande[0], "touch")){
+				printf("ici la commande touch\n");
+				cmd_touch(split_commande);
+			} else if (!strcmp(split_commande[0], "ls")){
+				printf("ici la commande ls\n");
+				cmd_ls(split_commande);
+			} else {
+				printf("La commande %s est inconnue", split_commande[0]);
 			}
 			
-			parsing(commande, split_commande, &argc_commande);
-			
+			/*
 			// Si on demande le contenu du fichier data.bd (index)
 			ret = cmd_showdata(commande);
 			
@@ -162,16 +171,18 @@ int main (int argc, char ** argv){
 			
 			//affichage du retour
 			printf("%s %s\n",ret, commande);
-
+			*/		
+	
 		}
 		
 		free(commande);
-		
+		// ### TODO free de split_commande
 	// Serveurs	
 	} else {	
 		
 		while(1){
 			// On recoit la longueur de la commande
+			/*
 			MPI_Recv (&length, 2, MPI_INT, 0, tag, MPI_COMM_WORLD, &status[0]);
 			
 			// Réception de la commande
@@ -201,6 +212,7 @@ int main (int argc, char ** argv){
 			
 			//Envoi du retour (erreur ou info)
 			MPI_Send (retour, lengthRet, MPI_CHAR, 0, tag, MPI_COMM_WORLD);
+			*/
 		}
 
 	}

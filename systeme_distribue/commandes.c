@@ -5,9 +5,137 @@
 #include "commandes.h"
 #include "gestionFichier.h"
 #include "utils.h"
+#include "constante.h"
+#include "get_env.h"
+
+void cmd_touch(char ** s_c){
+
+	int argc = 0;
+	while(s_c[argc] != NULL){
+		//printf("%s\n", s_c[argc]);
+		argc++;
+	}
+
+	if(argc < 2){
+	        printf("Usage : touch <filename>\n");
+                return;
+        }
+                                                                                                                                                                                                  
+        FILE *fp = fopen(FILE_INDEX,"r+"); // r+ c'est read and write, si tu met w, c'est read and write mais ça écrase le fichier
+        if(fp == NULL){
+                printf("Fichier non trouver, ou acces non permis.\n");
+        	return;
+        }
+        int i;
+        for(i = 1; i < argc ; i++){
+                unsigned long long cursor;
+                                                                                                                                                                                                  
+                fseek(fp, 0, SEEK_SET);
+                fread(&cursor, sizeof(cursor), 1, fp);
+                                                                                                                                                                                                  
+                // printf("valeur = %llu \n", cursor);
+                                                                                                                                                                                                  
+                fseek(fp, cursor, SEEK_SET);
+                                                                                                                                                                                                  
+                // valeur a rajouter dans le fichier
+                char active = 1; // octet active
+                unsigned long long parent; // parent est envoyé en argument de l'executable, pour le moment se sera 0 // ### a changer
+                get_parent(&parent);
+                char type_file = 1; // type de fichier, 1 = fichier (parce que touch), 0 pour un dossier
+                char file_name[255]; // le nom du fichier // ### quand un ficheir est creer avec touch, on n'écris rien dans stockage.jjg, dés qu'il y a du contenue on remplacera cette valeur..
+                unsigned long long cursor_stock = 0; // adresse a laquelle se trouve le fichier dans stockage.jjg // ### a changer, aller chercher la valeur dans le fichier stockage.jjg
+                unsigned long long length_file = 0; // taille du fichier, 0 puisque juste créer, par de contenue
+                                                                                                                                                                                                  
+                strcpy(file_name, s_c[i]); // on copie la chaine de charactere dans file_name pour être sur d'avoir les 255 char
+                                                                                                                                                                                                  
+                // on verifie que la personne n'essaye pas de rajouter quelque chose qui existe déjà
+                if(file_exist(FICHIER, file_name) != 0){
+                        printf("Le fichier : \"%s\" existe déjà.\n", file_name);
+                } else {
+                                                                                                                                                                                                  
+                        // on ajoute les valeurs
+                        fwrite(&active,sizeof(active), 1, fp); // on met rend active la ligne
+                        fwrite(&parent,sizeof(parent), 1, fp); // on écris le parent ### pas encore fait
+                        fwrite(&type_file,sizeof(type_file), 1, fp);
+                        fwrite(file_name,sizeof(file_name), 1, fp);
+                        fwrite(&cursor_stock,sizeof(cursor_stock), 1, fp);
+                        fwrite(&length_file,sizeof(length_file), 1, fp);
+                                                                                                                                                                                                  
+                        // on remet le cuseur de debut de fichier de index.jjg a la nouvelle valeur
+                        cursor += INDEX_LINE_SIZE;
+                        fseek(fp, 0, SEEK_SET); // on se remet au début
+                        fwrite(&cursor, sizeof(cursor), 1, fp);
+                }
+        }
+        fclose(fp);
+
+}
+
+void cmd_ls(char ** s_c){
+
+	int argc = 0;
+       	while(s_c[argc] != NULL){
+       		//printf("%s\n", s_c[argc]);
+       		argc++;
+       	}
+
+	FILE *fp = fopen(FILE_INDEX, "r");
+	if(fp == NULL){
+		printf("Fichier non trouver, ou acces non permis.\n");
+		return;
+	}
+
+    	unsigned long long cursor_end;
+    	unsigned long long cursor_tmp = FILE_BASE_ENV;
+	unsigned long long parent;
+
+	fseek(fp, 0,  SEEK_SET);
+	fread(&cursor_end, sizeof(cursor_end), 1, fp);
+	get_parent(&parent);
+
+	fseek(fp, cursor_tmp,  SEEK_SET);
+	
+	char active;
+	unsigned long long tmp_parent;
+	char type_file;
+	char file_name[255];
+	char char_type_file;
+	unsigned long long file_cursor_stock;
+	unsigned long long file_size;
+
+	while(cursor_tmp < cursor_end){
+		fread(&active, sizeof(active), 1, fp);
+		fread(&tmp_parent, sizeof(tmp_parent), 1, fp);
+		fread(&type_file, sizeof(type_file), 1, fp);
+		if(active && tmp_parent == parent){ // on verifie qu'il est actif, et qu'il est bien dans le repertoire courant
+			fread(file_name, sizeof(file_name), 1, fp);
+			// on affiche les infos 
+			if(type_file == FICHIER){ // fichier
+				//fseek(fp, sizeof(unsigned long long), SEEK_CUR); // on saute l'endroit ou est stocké le fichier
+				fread(&file_cursor_stock, sizeof(file_cursor_stock), 1, fp);
+				fread(&file_size, sizeof(file_size), 1, fp);
+				char_type_file = 'f';	
+				
+			} else {
+				char_type_file = 'd';
+				file_size = 1; // on met file_size a 1...
+			}
+			
+			// ### peut être plus de différence sur file_size.. un if en plus..
+			printf("%c\t%s\t%llu\t%llu\n", char_type_file, file_name, file_cursor_stock,file_size); 
+		}
+
+		cursor_tmp += INDEX_LINE_SIZE;
+		fseek(fp, cursor_tmp, SEEK_SET); // on place le curseur au bon endroit pour la suite ( parce qu'on ne lis pas tout.. surtout si c'est un fichier..
+
+	}
+
+	fclose(fp);
+
+}
 
 // Commande Touch
-char* cmd_touch(char* cmd, char nameMach[MPI_MAX_PROCESSOR_NAME]){
+/*char* cmd_touch(char* cmd, char nameMach[MPI_MAX_PROCESSOR_NAME]){
 	int match;
 	char* ret = (char *) malloc(sizeof(char)*1024); // on sait que ca ne dépassera pas 1024
 	strcpy(ret,"");
@@ -59,7 +187,7 @@ char* cmd_touch(char* cmd, char nameMach[MPI_MAX_PROCESSOR_NAME]){
 
 	}
 	return ret;
-}
+} */
 
 // Commande Rm
 char* cmd_rm(char* cmd){
