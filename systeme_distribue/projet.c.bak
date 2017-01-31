@@ -18,15 +18,13 @@ int main (int argc, char ** argv){
 	
 	//Variables
 	int num; // numéro du thread						
-	char * commande = (char * ) malloc(sizeof(char)* 4096);// variable qui contient la commande
-	char ** split_commande = malloc(256*256*sizeof(char));
+	char * commande; // variable qui contient la commande
 	int tag = 0;		
-	char *ret;// info de retour des serveurs0
+	char *ret;// info de retour des serveurs
 	int size;// nombre de threads
 	int length;// taille de la commande
 	int lengthRet;// taille du retour
 	int lenNameMach;// longueur du nim de la machine
-	int argc_commande = 3; // ### pas sure
 	char nameMach[MPI_MAX_PROCESSOR_NAME]; 	// nom de la machine
 	MPI_Request request;
 	MPI_Status status[4];
@@ -99,6 +97,7 @@ int main (int argc, char ** argv){
 	// Client unique qui envoi des commandes
 	if (0==num){
 		
+	
 		// Supprimer le contenu du fichier commun dès le début
 		supprimerContenu();
 		
@@ -110,23 +109,13 @@ int main (int argc, char ** argv){
 			// On demande la commande
 			printf("user@machine$>");
 			fflush(stdout);
-			if(fgets(commande, 4096, stdin) == NULL){
-				printf("lol");	
-				break;
-			}
-			// on supprime la touche entrée
-			commande[strcspn(commande, "\n")] = 0;
-
-			// on trim la commande
-			trim(commande);
+			commande = inputString(stdin, 10);
 			
 			// Sortie du programme (exit)
 			char *str_regex = "^[ ]*exit[ ]*$";
 			if(!execRegex(str_regex,commande)){ 
 				MPI_Abort(MPI_COMM_WORLD,0);
 			}
-			
-			parsing(commande, split_commande, &argc_commande);
 			
 			// Si on demande le contenu du fichier data.bd (index)
 			ret = cmd_showdata(commande);
@@ -161,7 +150,7 @@ int main (int argc, char ** argv){
 			}
 			
 			//affichage du retour
-			printf("%s %s\n",ret, commande);
+			printf("%s\n",ret);
 
 		}
 		

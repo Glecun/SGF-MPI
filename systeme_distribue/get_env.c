@@ -207,7 +207,6 @@ void put_file(char * path_filename, unsigned long long cursor_stock, unsigned lo
                 }
 
                 fread(tmp, sizeof(char) * tmp_size, 1, fp_src);
-                printf("tmp : %d ,contenue : %s\n", tmp_size ,tmp);
                 fwrite(tmp, sizeof(char) * tmp_size, 1, fp_dest);
         }
 
@@ -240,7 +239,7 @@ void extract_file(char * path_filename, unsigned long long cursor_stock, unsigne
 /**
  * Fonction qui permet de créer une entrée pour un fichier dans le fichier index
  */
-void ajouterLigne(unsigned long long cursor, char active, unsigned long long parent, char file_type, char * file_name, unsigned long long file_cursor_stock, unsigned long long file_size){
+/*void ajouterLigne(unsigned long long cursor, char active, unsigned long long parent, char file_type, char * file_name, unsigned long long file_cursor_stock, unsigned long long file_size){
         FILE *fp = fopen(FILE_INDEX, "r+");
 
         if(fp == NULL){
@@ -254,10 +253,9 @@ void ajouterLigne(unsigned long long cursor, char active, unsigned long long par
         fwrite(&file_type, sizeof(file_type), 1, fp);
         fwrite(file_name, sizeof(char) * 255, 1, fp);
         if(file_type == FICHIER){
-			printf("Here : %llu", file_cursor_stock);
-            fwrite(&file_cursor_stock, sizeof(file_cursor_stock), 1, fp);
-            fwrite(&file_size, sizeof(file_size), 1, fp);
+        	fwrite(&file_cursor_stock, sizeof(file_cursor_stock), 1, fp);
+        	fwrite(&file_size, sizeof(file_size), 1, fp);
         }
 
         fclose(fp);
-};
+};*/
