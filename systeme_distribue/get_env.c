@@ -27,6 +27,48 @@ void get_index_last_cursor( unsigned long long * c ){
 };
 
 /*
+* Fonction qui recupere le round robin actuel.
+* @param rr - l'endroit ou sera stocké le round_robin
+* @return rr - la valeur du round robin
+*/
+
+void get_round_robin(unsigned long long * rr){
+	
+	 FILE *fp = fopen(FILE_INDEX, "r");
+                                                                        
+         if(fp == NULL){
+                 printf("Fichier non trouver, ou acces non permis.\n");
+         }
+                                                                        
+         fseek(fp, 8 + 1 + 8, SEEK_SET);
+                                                                        
+         unsigned long long round;
+                                                                        
+         fread(&round, sizeof(round), 1, fp);
+                                                                        
+         (*rr) = round;
+         fclose(fp);
+}
+
+/*
+ * Fonction qui permet de modifier la valeur du round_robin
+ * @param rr - le nouveau round robin
+ */
+void set_round_robin( unsigned long long rr){
+        FILE *fp = fopen(FILE_INDEX, "r+");
+
+        if(fp == NULL){
+                printf("Fichier non trouver, ou acces non permis.\n");
+        }
+
+        fseek(fp, 8 + 1 + 8, SEEK_SET); // on place le cursor
+
+        fwrite(&rr, sizeof(rr), 1, fp);
+
+        fclose(fp);
+};
+
+/*
  * Fonction qui permet d'avoir le la dernière position de la BDD pour pouvoir sotcker à la fin
  * @param c - l'endroit ou sera stocké la position du pointer
  * @return cursor - la valeur de l'index du cursor à la fin du fichier BDD
@@ -239,7 +281,7 @@ void extract_file(char * path_filename, unsigned long long cursor_stock, unsigne
 /**
  * Fonction qui permet de créer une entrée pour un fichier dans le fichier index
  */
-void ajouterLigneVim(unsigned long long cursor, char active, unsigned long long parent, char file_type, char * file_name, unsigned long long file_cursor_stock, unsigned long long file_size){
+void ajouterLigne(unsigned long long cursor, char active, unsigned long long parent, char file_type, char * file_name, unsigned long long file_cursor_stock, unsigned long long file_size, unsigned long long machine){
         FILE *fp = fopen(FILE_INDEX, "r+");
 
         if(fp == NULL){
@@ -255,6 +297,7 @@ void ajouterLigneVim(unsigned long long cursor, char active, unsigned long long 
         if(file_type == FICHIER){
         	fwrite(&file_cursor_stock, sizeof(file_cursor_stock), 1, fp);
         	fwrite(&file_size, sizeof(file_size), 1, fp);
+		fwrite(&machine, sizeof(machine), 1, fp);
         }
 
         fclose(fp);

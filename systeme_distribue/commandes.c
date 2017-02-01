@@ -3,7 +3,6 @@
 #include <mpi.h>
 #include <string.h>
 #include "commandes.h"
-#include "gestionFichier.h"
 #include "utils.h"
 #include "constante.h"
 #include "get_env.h"
@@ -33,8 +32,6 @@ void cmd_touch(char ** s_c){
                 fseek(fp, 0, SEEK_SET);
                 fread(&cursor, sizeof(cursor), 1, fp);
                                                                                                                                                                                                   
-                // printf("valeur = %llu \n", cursor);
-                                                                                                                                                                                                  
                 fseek(fp, cursor, SEEK_SET);
                                                                                                                                                                                                   
                 // valeur a rajouter dans le fichier
@@ -45,7 +42,15 @@ void cmd_touch(char ** s_c){
                 char file_name[255]; // le nom du fichier // ### quand un ficheir est creer avec touch, on n'écris rien dans stockage.jjg, dés qu'il y a du contenue on remplacera cette valeur..
                 unsigned long long cursor_stock = 0; // adresse a laquelle se trouve le fichier dans stockage.jjg // ### a changer, aller chercher la valeur dans le fichier stockage.jjg
                 unsigned long long length_file = 0; // taille du fichier, 0 puisque juste créer, par de contenue
-                                                                                                                                                                                                  
+		unsigned long long machine;
+		unsigned long long round_robin;
+		get_round_robin(&round_robin); 
+
+		int size;
+		MPI_Comm_size(MPI_COMM_WORLD, &size);
+
+		machine = (round_robin % (size-1)) +1;
+                                                                                                                                                                                  
                 strcpy(file_name, s_c[i]); // on copie la chaine de charactere dans file_name pour être sur d'avoir les 255 char
                                                                                                                                                                                                   
                 // on verifie que la personne n'essaye pas de rajouter quelque chose qui existe déjà
@@ -54,17 +59,21 @@ void cmd_touch(char ** s_c){
                 } else {
                                                                                                                                                                                                   
                         // on ajoute les valeurs
+			ajouterLigne(cursor, active, parent, type_file, file_name, cursor_stock, length_file, machine);
+			/*
                         fwrite(&active,sizeof(active), 1, fp); // on met rend active la ligne
                         fwrite(&parent,sizeof(parent), 1, fp); // on écris le parent ### pas encore fait
                         fwrite(&type_file,sizeof(type_file), 1, fp);
                         fwrite(file_name,sizeof(file_name), 1, fp);
                         fwrite(&cursor_stock,sizeof(cursor_stock), 1, fp);
                         fwrite(&length_file,sizeof(length_file), 1, fp);
-                                                                                                                                                                                                  
+                        */                                                                                                                                                                        
                         // on remet le cuseur de debut de fichier de index.jjg a la nouvelle valeur
                         cursor += INDEX_LINE_SIZE;
                         fseek(fp, 0, SEEK_SET); // on se remet au début
                         fwrite(&cursor, sizeof(cursor), 1, fp);
+			
+			set_round_robin(round_robin+1);
                 }
         }
         fclose(fp);
@@ -164,6 +173,7 @@ void cmd_vim(char ** s_c){
 	char file_name[255]; // le nom du fichier // ### quand un ficheir est creer avec touch, on n'écris rien dans stockage.jjg, dés qu'il y a du contenue on remplacera cette valeur..
 	unsigned long long file_cursor_stock;
 	unsigned long long file_size;
+	unsigned long long machine;
 
 	strcpy(file_name, s_c[1]); // on copie la chaine de charactere dans file_name pour être sur d'avoir les 255 char
 
@@ -179,6 +189,7 @@ void cmd_vim(char ** s_c){
 		fread(file_name, sizeof(file_name), 1, fp);
 		fread(&file_cursor_stock, sizeof(file_cursor_stock), 1, fp);
 		fread(&file_size, sizeof(file_size), 1, fp);
+		fread(&machine, sizeof(machine), 1, fp);
 		char concat[4096];
 		concat[0] = '\0';
 		strcat(concat, PATH_FOLDER_SWAP); // on met le chemin vers le dossier de swap
@@ -205,7 +216,7 @@ void cmd_vim(char ** s_c){
 		put_file(concat,cursor_stock, &file_size);
 		
 		// on change le fichier dans index, avec la nouvelle taille et l'endroit ou on le met.. ###
-		ajouterLigneVim(cursor, active, parent, file_type, file_name, cursor_stock, file_size);
+		ajouterLigne(cursor, active, parent, file_type, file_name, cursor_stock, file_size, machine);
 	
 	//	On supprimer le fichier dans le filesystem hote
 		remove(concat);
@@ -299,9 +310,9 @@ void cmd_pwd(char ** s_c){
 	char path[4096] = "";
 
 	char active;
-    unsigned long long tmp_parent;
-    char type_file;
-    char folder_name[255];
+    	unsigned long long tmp_parent;
+    	char type_file;
+	char folder_name[255];
 	char concat[4096];
 
 	while(!finish){
@@ -471,6 +482,7 @@ void cmd_ls(char ** s_c){
 	char char_type_file;
 	unsigned long long file_cursor_stock;
 	unsigned long long file_size;
+	unsigned long long machine;
 
 	while(cursor_tmp < cursor_end){
 		fread(&active, sizeof(active), 1, fp);
@@ -483,15 +495,15 @@ void cmd_ls(char ** s_c){
 				//fseek(fp, sizeof(unsigned long long), SEEK_CUR); // on saute l'endroit ou est stocké le fichier
 				fread(&file_cursor_stock, sizeof(file_cursor_stock), 1, fp);
 				fread(&file_size, sizeof(file_size), 1, fp);
+				fread(&machine, sizeof(machine), 1, fp);
 				char_type_file = 'f';	
+				printf("%c\t%s\t%llu\t%llu\n", char_type_file, file_name,file_size, machine); 
 				
 			} else {
 				char_type_file = 'd';
 				file_size = 1; // on met file_size a 1...
+				printf("%c\t%s\t%llu\n", char_type_file, file_name,file_size); 
 			}
-			
-			// ### peut être plus de différence sur file_size.. un if en plus..
-			printf("%c\t%s\t%llu\t%llu\n", char_type_file, file_name, file_cursor_stock,file_size); 
 		}
 
 		cursor_tmp += INDEX_LINE_SIZE;
@@ -613,6 +625,7 @@ void cmd_ls(char ** s_c){
 }*/
 
 // Commande Show data
+/*
 char* cmd_showdata(char* cmd){
 	int match;
 	char* ret = (char *) malloc(sizeof(char)*1024); //1024 initialement
@@ -642,3 +655,4 @@ char* cmd_showdata(char* cmd){
 	}
 	return ret;
 }
+*/

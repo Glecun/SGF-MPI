@@ -8,7 +8,6 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <sys/wait.h>
-#include "gestionFichier.h"
 #include "utils.h"
 #include "commandes.h"
 #include "constante.h"
@@ -48,7 +47,8 @@ int main (int argc, char ** argv){
 
 			// on calcul le pointeur a partir duquel on peux écrire ( en nombre d'octet)
 			unsigned long long index_last_cursor= 8 + 1 + 8 + 3 + 3*8 + 3*255; // long long pour forcer a 8 octet, de base sur linux un simple long aurait suffit..
-		
+			unsigned long long round_robin = 0;		
+
 			// Création du fichier d'index
 			if_file_isset_then_delete( FILE_NAME_INDEX );
 		
@@ -60,8 +60,9 @@ int main (int argc, char ** argv){
 			fwrite(&index_last_cursor, sizeof(index_last_cursor), 1, fp);
 			fwrite(&version, sizeof(version), 1, fp);
 			fwrite(&dossier_parent, sizeof(dossier_parent), 1, fp);
+			fwrite(&round_robin, sizeof(round_robin), 1, fp);
 			// maintenant au cas ou.. pour la suite on prévoie.. on met 3 char, 3 unsigned longlong et 3 char 255
-			fseek(fp, 3 + 3*8 + 3*255, SEEK_CUR);
+			fseek(fp, 3 + 2*8 + 3*255, SEEK_CUR);
 			fclose(fp);
 			// creation, avec touch de "/" , l'element racine ###
 		
@@ -100,7 +101,7 @@ int main (int argc, char ** argv){
 	if (0==num){
 		
 		// Supprimer le contenu du fichier commun dès le début
-		supprimerContenu();
+		//supprimerContenu();
 		
 		// Premier thread destinataire
 		//int threadDest=1;

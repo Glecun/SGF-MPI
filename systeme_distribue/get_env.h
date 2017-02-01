@@ -1,5 +1,7 @@
 void get_version(char * v);
 void get_index_last_cursor(unsigned long long * c);
+void get_round_robin(unsigned long long * rr);
+void set_round_robin( unsigned long long rr);
 void get_stock_last_cursor(unsigned long long * c);
 void set_stock_last_cursor( unsigned long long cursor );
 void get_parent(unsigned long long * p);
@@ -7,7 +9,7 @@ void set_parent(unsigned long long p);
 unsigned long long file_exist(char arg_type_file, char * arg_file_name);
 void put_file(char * path_filename, unsigned long long cursor_stock, unsigned long long * file_size);
 void extract_file(char * path_filename, unsigned long long cursor_stock, unsigned long long file_size);
-void ajouterLigneVim(unsigned long long cursor, char active, unsigned long long parent, char file_type, char * file_name, unsigned long long file_cursor_stock, unsigned long long file_size);
+void ajouterLigne(unsigned long long cursor, char active, unsigned long long parent, char file_type, char * file_name, unsigned long long file_cursor_stock, unsigned long long file_size, unsigned long long machine);
 void supprimerLigne(unsigned long long cursor);
 unsigned long long get_fils(unsigned long long cursor);
 void supprimerDossier(char * path, unsigned long long parent);

@@ -3,6 +3,7 @@
 #include <string.h>
 #include "gestionFichier.h"
 
+/*
 int ajouterLigne(char newMachine[50], char newChemin[50]) {
     FILE * f = fopen("data.bd", "r+"); // ouvre le fichier en mode append
 	if (!f) {
@@ -60,6 +61,7 @@ int ajouterLigne(char newMachine[50], char newChemin[50]) {
 
 	return 1;
 }		 
+*/
 
 f_Fichier* getLigne(int i) { 
 	// Ouvre le fichier en mode lecture binaire

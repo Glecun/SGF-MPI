@@ -1,4 +1,4 @@
-#define PATH_GLOBAL_DIR "/home/julien/Documents/air3/apd/projet/systeme_distribue_v3/"
+#define PATH_GLOBAL_DIR "/home/loupix/system/projo/"
 
 #define FILE_NAME_INDEX "index.jjg"
 #define FILE_NAME_STOCKAGE "stockage.jjg"
@@ -12,7 +12,7 @@
 #define PATH_BIN_FILE PATH_GLOBAL_DIR DIR_BIN_NAME "/"
 
 #define FILE_BASE_ENV 8+1+8+3*(1+8+255) // base du fichier index, comptant tout l'envirronement
-#define INDEX_LINE_SIZE (1 + 8 + 1 + 255 + 8 + 8)
+#define INDEX_LINE_SIZE (1 + 8 + 1 + 255 + 8 + 8 + 8)
 
 #define FICHIER 1
 #define DOSSIER 0
