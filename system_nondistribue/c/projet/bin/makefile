@@ -9,3 +9,4 @@ mkdir: mkdir.c ../get_env.c
 del: del.c ../get_env.c
 rename: rename.c ../get_env.c
 vim: vim.c ../get_env.c
+deldir: deldir.c ../get_env.c

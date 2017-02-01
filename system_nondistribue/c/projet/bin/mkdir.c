@@ -17,7 +17,7 @@ int main(int argc, char **argv){
 		return EXIT_FAILURE;
 	}
 
-	unsigned long long cursor;		
+	unsigned long long cursor;
 
 	// valeur a rajouter dans le fichier
 	char active = 1; // octet active
@@ -37,19 +37,20 @@ int main(int argc, char **argv){
 	if(file_exist(DOSSIER, file_name) != 0){
 		printf("Le dossier : \"%s\" existe déjà.\n", file_name);
 	} else {
+		
 		//on met le curseur du fichier au bon endroit
 		fseek(fp, 0, SEEK_SET);               		
-                fread(&cursor, sizeof(cursor), 1, fp);
-	        fseek(fp, cursor, SEEK_SET);
-
+		fread(&cursor, sizeof(cursor), 1, fp);
+		fseek(fp, cursor, SEEK_SET);
+		
 		// on ajoute les valeurs
 		fwrite(&active,sizeof(active), 1, fp); // on met rend active la ligne 
 		fwrite(&parent,sizeof(parent), 1, fp); // on écris le parent
 		fwrite(&type_file,sizeof(type_file), 1, fp); 
-		fwrite(file_name,sizeof(file_name), 1, fp); 
+		fwrite(file_name,sizeof(file_name), 1, fp);
 
 		// on remet le cuseur de debut de fichier de index.jjg a la nouvelle valeur
-		cursor += 1 + 8 + 1 + 255;
+		cursor += INDEX_LINE_SIZE;
 		fseek(fp, 0, SEEK_SET); // on se remet au début
 		fwrite(&cursor, sizeof(cursor), 1, fp);
 	}

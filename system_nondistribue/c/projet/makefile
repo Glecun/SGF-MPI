@@ -1,4 +1,4 @@
 CC=gcc
 CFLAGS= -Wall
 
-filesystem : filesystem.c get_env.c  
+filesystem : filesystem.c functions_filesystem.c 

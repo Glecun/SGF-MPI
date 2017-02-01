@@ -12,8 +12,8 @@ int main(int argc, char ** argv){
 		return EXIT_FAILURE;
 	}
 
-        unsigned long long cursor_end;
-        unsigned long long cursor_tmp = FILE_BASE_ENV;
+    unsigned long long cursor_end;
+    unsigned long long cursor_tmp = FILE_BASE_ENV;
 	unsigned long long parent;
 
 	fseek(fp, 0,  SEEK_SET);
@@ -45,18 +45,14 @@ int main(int argc, char ** argv){
 				
 			} else {
 				char_type_file = 'd';
-				file_size = 1; // on met file_size a 1..
+				file_size = 1; // on met file_size a 1...
 			}
 			
-			printf("%c\t%s\t%llu\t%llu\n", char_type_file, file_name, file_cursor_stock,file_size); // ### peut être plus de différence sur file_size.. un if en plus..
+			// ### peut être plus de différence sur file_size.. un if en plus..
+			printf("%c\t%s\t%llu\t%llu\n", char_type_file, file_name, file_cursor_stock,file_size); 
 		}
 
-		if(type_file == FICHIER){
-			cursor_tmp += 1+8+1+255+8+8;
-		} else {
-			cursor_tmp += 1+8+1+255;
-		}
-
+		cursor_tmp += INDEX_LINE_SIZE;
 		fseek(fp, cursor_tmp, SEEK_SET); // on place le curseur au bon endroit pour la suite ( parce qu'on ne lis pas tout.. surtout si c'est un fichier..
 
 	}

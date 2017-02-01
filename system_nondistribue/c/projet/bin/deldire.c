@@ -28,7 +28,7 @@ int main(int argc, char ** argv){
                 fseek(fp, tmp_cursor, SEEK_SET); // je vais sur la ligne du fichier
                 fwrite(&active, sizeof(active), 1, fp); //je met le char active a 0.
         } else {
-                printf("Le fichier : %s, n'existe pas.\n", file_name);
+                printf("Le dossier : %s, n'existe pas.\n", file_name);
         }
 
         fclose(fp);

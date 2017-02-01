@@ -5,7 +5,8 @@
 #include "../get_env.h"
 
 int main(int argc, char **argv){
-	// Usage
+
+	// usage
 	if(argc < 2){
 		printf("Usage : vim <filename>\n");
 		return EXIT_FAILURE;
@@ -42,16 +43,15 @@ int main(int argc, char **argv){
 			fread(&file_cursor_stock, sizeof(file_cursor_stock), 1, fp);
 			fread(&file_size, sizeof(file_size), 1, fp);
 
-			char concat[4096];                                                           			
-                        strcat(concat, PATH_FOLDER_SWAP); // on met le chemin vers le dossier de swap
-                        strcat(concat, file_name); // on rajoute le nom du fichier
-                        strcat(concat, ".swp");  // on rajotue l'extension .swp
+			char concat[4096];                                                         			
+			strcat(concat, PATH_FOLDER_SWAP); // on met le chemin vers le dossier de swap
+			strcat(concat, file_name); // on rajoute le nom du fichier
+			strcat(concat, ".swp");  // on rajotue l'extension .swp
 
 			// on creer le fichier
-                        FILE *fp_swp = fopen(concat, "w+"); // on crée le fichier.
-			fclose(fp_swp);		
-
-
+			FILE *fp_swp = fopen(concat, "w+"); // on crée le fichier.
+			fclose(fp_swp);
+			
 			// on regarde si le fichier n'est pas vide, on le remplis. // oué oué ça fait sens
 			//if(file_cursor_stock != 0 && file_size != 0) {
 			extract_file(concat, file_cursor_stock, file_size);					
@@ -66,15 +66,12 @@ int main(int argc, char **argv){
 			unsigned long long cursor_stock;
 			get_stock_last_cursor(&cursor_stock);
 			put_file(concat,cursor_stock, &file_size);
-		
-	
+			
 			// on change le fichier dans index, avec la nouvelle taille et l'endroit ou on le met.. ###
-
 			ajouterLigne(cursor, active, parent, file_type, file_name, cursor_stock, file_size);
 		
 		//	On supprimer le fichier dans le filesystem hote
-				
-
+			remove(concat);
 	} else {	
 		printf("Le fichier \"%s\" n'existe pas.\n", file_name);
 	}
