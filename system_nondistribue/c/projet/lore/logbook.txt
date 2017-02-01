@@ -1,3 +1,7 @@
+-- 2017.1.29
+
+ajout de la fonction trim, et du trim des commandes , plus d'espace non voulu
+
 -- 2017.1.28
 
 Clean des fichiers : 
