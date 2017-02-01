@@ -195,6 +195,7 @@ void put_file(char * path_filename, unsigned long long cursor_stock, unsigned lo
         char tmp[1024];
         unsigned long long tmp_size_src = size_src; // compteur
         int tmp_size; // retiens combien de char on copieras
+	printf("cursor_stock_v2 = %lld\nsize_src = %lld\n",cursor_stock,size_src);
         fseek(fp_dest, cursor_stock, SEEK_SET);
         fseek(fp_src, 0, SEEK_SET);
         while(tmp_size_src > 0){

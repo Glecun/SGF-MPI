@@ -169,8 +169,12 @@ void cmd_vim(char ** s_c){
 
 	cursor = file_exist(FICHIER, file_name);
 
+	printf("file_name=%s\ncursor=%lld\n",file_name,cursor);
+
 	if(cursor !=0){
+		printf("inside\n");
 		fseek(fp, cursor, SEEK_SET); // on place le cursor au bon endroit.
+		printf("Positionnement du cursor ok!\n");
 		//On crée le fichier fichier sur le filesystem hote.
 		// On recupere les infos.
 		fread(&active, sizeof(active), 1, fp);
@@ -179,18 +183,23 @@ void cmd_vim(char ** s_c){
 		fread(file_name, sizeof(file_name), 1, fp);
 		fread(&file_cursor_stock, sizeof(file_cursor_stock), 1, fp);
 		fread(&file_size, sizeof(file_size), 1, fp);
+		printf("passage1\n");
 		char concat[4096];
 		concat[0] = '\0';
 		strcat(concat, PATH_FOLDER_SWAP); // on met le chemin vers le dossier de swap
 		strcat(concat, file_name); // on rajoute le nom du fichier
 		strcat(concat, ".swp");  // on rajotue l'extension .swp
+		printf("passage2\n");
+		printf("création du fichier %s\nfilename=%s\npath_folder_swap=%s\n",concat,file_name,PATH_FOLDER_SWAP);
 		// on creer le fichier
 		FILE *fp_swp = fopen(concat, "w+"); // on crée le fichier.
 		fclose(fp_swp);
+		printf("passage3\n");
 		
 		// on regarde si le fichier n'est pas vide, on le remplis. // oué oué ça fait sens
 		//if(file_cursor_stock != 0 && file_size != 0) {
-		extract_file(concat, file_cursor_stock, file_size);
+		extract_file(concat, file_cursor_stock, file_size);	
+		printf("passage4\n");				
 		//}
 
 	//	On ouvre le fichier ainsi crée grace a vim
@@ -202,6 +211,7 @@ void cmd_vim(char ** s_c){
 	//	Une fois le fichier éditer, on écrit le résultat dans notre filesystem
 		unsigned long long cursor_stock;
 		get_stock_last_cursor(&cursor_stock);
+		printf("last_cursor_stock=%lld\n",cursor_stock);
 		put_file(concat,cursor_stock, &file_size);
 		
 		// on change le fichier dans index, avec la nouvelle taille et l'endroit ou on le met.. ###
