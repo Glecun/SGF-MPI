@@ -32,13 +32,26 @@ Système de gestion de fichier distribué avec un systeme de fichier très simpl
 ![alt tag](http://img15.hostingpics.net/pics/184417explicationsFonctionnelle1.png)
 
 ## Système de fichiers complexe distribué
-**Dossier:** ???
+### Version 1
+
+**Dossier:** system_nondistribue_distribue
 
 **Explication Fonctionnelle**
 
+Dans cette version, chaque commande est un executable. Cette version ne marche pas très bien à cause d'un comportement intrisèque de MPI
+![alt tag](http://img11.hostingpics.net/pics/524332explicationsFonctionnelle3transparent.png)
+
+### Version 2
+
+**Dossier:** system_distribue
+
+**Explication Fonctionnelle**
+
+Dans cette version, les commandes sont cette fois ci dans des fonctions. Elle est le résultat du mélange entre le système de fichiers non-distribué et le système de fichiers très simplifié distribué.
 ![alt tag](http://img15.hostingpics.net/pics/717274explicationsFonctionnelle2.png)
 
 ## Pour aller plus loin
+Cette partie est plus détaillée dans le diaporama.
 * Ajouter de la redondance de données afin pour faire de la tolérance aux pannes
   * Faire une étude sur le nombre minimun de copies à réaliser 
 * En prenant compte du nombre de demandes et leur sources, faire un placement intelligent en prenant en compte la topologie du réseau: vitesse, latence, débit, etc...
