@@ -1,9 +1,9 @@
-#define PATH_GLOBAL_DIR "/home/loupix/system/projo/"
+#define PATH_GLOBAL_DIR "./"
 
 #define FILE_NAME_INDEX "index.jjg"
 #define FILE_NAME_STOCKAGE "stockage.jjg"
 #define FILE_INDEX PATH_GLOBAL_DIR FILE_NAME_INDEX
-#define FILE_STOCK PATH_GLOBAL_DIR "1/" FILE_NAME_STOCKAGE
+#define FILE_STOCK PATH_GLOBAL_DIR FILE_NAME_STOCKAGE
 
 #define DIR_SWP_NAME "swp"
 #define PATH_FOLDER_SWAP PATH_GLOBAL_DIR DIR_SWP_NAME "/"

@@ -1,0 +1,18 @@
+Pour lancer le script : 
+chmod 755 run.sh
+./run.sh NOMBRE_DE_MACHINE [localhost|liste_des_machines] [OPTIONS]
+
+	NOMBRE_DE_MACHINE - obligatoire : le nombre de machines
+	[localhost|liste_des_machines] - facultatif : peut contenir "localhost" ou la liste des machines "g210-6,g210-5"
+	[OPTIONS] - facultatif : possibilité de mettre "-i" pour initialiser le système
+	
+Exemple : 
+// premier lancement
+./run.sh 4 -i
+
+// second lancement
+./run.sh 4 
+
+
+Le paramètre "-i" réalise l'initialisation => suppression de tous les fichiers de bases de données
+

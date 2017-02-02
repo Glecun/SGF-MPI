@@ -3,7 +3,6 @@
 #include <mpi.h>
 #include <string.h>
 #include "commandes.h"
-#include "utils.h"
 #include "constante.h"
 #include "get_env.h"
 
@@ -201,7 +200,7 @@ void cmd_vim(char ** s_c){
 		
 		// on regarde si le fichier n'est pas vide, on le remplis. // oué oué ça fait sens
 		//if(file_cursor_stock != 0 && file_size != 0) {
-		extract_file(concat, file_cursor_stock, file_size);
+		extract_file(concat, file_cursor_stock, file_size, machine);
 		//}
 
 	//	On ouvre le fichier ainsi crée grace a vim
@@ -210,11 +209,10 @@ void cmd_vim(char ** s_c){
 		system(command);
 		//system("ls");
 
-	//	Une fois le fichier éditer, on écrit le résultat dans notre filesystem
 		unsigned long long cursor_stock;
-		get_stock_last_cursor(&cursor_stock);
-		put_file(concat,cursor_stock, &file_size);
-		
+	//	Une fois le fichier éditer, on écrit le résultat dans notre filesystem
+		put_file(concat, &file_size, machine, &cursor_stock);
+
 		// on change le fichier dans index, avec la nouvelle taille et l'endroit ou on le met.. ###
 		ajouterLigne(cursor, active, parent, file_type, file_name, cursor_stock, file_size, machine);
 	
@@ -513,6 +511,12 @@ void cmd_ls(char ** s_c){
 
 	fclose(fp);
 
+}
+
+void cmd_help(){
+
+	// le printf
+	printf("cd : Change de répertoire courant.\n\ndel : Supprime un fichier dans le répertoire courant. \n\ndeldir : Supprime un répertoire dans le répertoire courant ainsi que tous ses fils récursivement. \n\nls : Affiche le contenu du répertoire courant. \n\nmkdir : Crée un répertoire dans le répertoire courant. \n\npwd : Affiche le chemin absolu du répertoire courant. \n\nrename : Renomme un fichier ou un répertoire dans le répertoire courant. \n\ntouch : Crée des fichiers dans le répertoire courant. \n\nvim : Lance l'éditeur de texte vim sur un fichier passé en paramètre. \n\nexit : Quitte le terminal. \n\nhelp : Affiche la liste des commandes. \n");
 }
 
 // Commande Touch

@@ -3,6 +3,7 @@
 #include <string.h>
 #include "constante.h"
 #include "get_env.h"
+#include "mpi.h"
 
 /*
  * Fonction qui permet d'avoir le la dernière position du fichier index pour pouvoir créer une entrée pour un nouveau fichier
@@ -25,6 +26,29 @@ void get_index_last_cursor( unsigned long long * c ){
         (*c) = cursor;
         fclose(fp);
 };
+
+/*
+ * Fonction qui permet d'avoir le la dernière position de la BDD pour pouvoir sotcker à la fin
+ * @param c - l'endroit ou sera stocké la position du pointer
+ * @return cursor - la valeur de l'index du cursor à la fin du fichier BDD
+ */
+void get_stock_last_cursor( unsigned long long * c , char * nom_fichier_bdd ){
+        FILE *fp = fopen(nom_fichier_bdd, "r");
+
+        if(fp == NULL){
+                printf("Fichier non trouver, ou acces non permis.\n");
+        }
+
+        fseek(fp, 0, SEEK_SET); // on passe le cursor
+
+        unsigned long long cursor;
+
+	fread(&cursor, sizeof(cursor), 1, fp);
+
+        (*c) = cursor;
+        fclose(fp);
+};
+
 
 /*
 * Fonction qui recupere le round robin actuel.
@@ -68,43 +92,22 @@ void set_round_robin( unsigned long long rr){
         fclose(fp);
 };
 
-/*
- * Fonction qui permet d'avoir le la dernière position de la BDD pour pouvoir sotcker à la fin
- * @param c - l'endroit ou sera stocké la position du pointer
- * @return cursor - la valeur de l'index du cursor à la fin du fichier BDD
- */
-void get_stock_last_cursor( unsigned long long * c ){
-        FILE *fp = fopen(FILE_STOCK, "r");
-
-        if(fp == NULL){
-                printf("Fichier non trouver, ou acces non permis.\n");
-        }
-
-        fseek(fp, 0, SEEK_SET); // on passe le cursor
-
-        unsigned long long cursor;
-
-        fread(&cursor, sizeof(cursor), 1, fp);
-
-        (*c) = cursor;
-        fclose(fp);
-};
 
 /*
  * Fonction qui permet de modifier la valeur du dernier cursor du fichier de BDD
  * @param c - l'endroit ou sera stocké la position du pointer
  * @return cursor - la valeur de l'index du cursor à la fin du fichier BDD
  */
-void set_stock_last_cursor( unsigned long long cursor ){
-        FILE *fp = fopen(FILE_STOCK, "r+");
+void set_stock_last_cursor( unsigned long long cursor , char * nom_fichier_bdd ){
+        FILE *fp = fopen(nom_fichier_bdd, "r+");
 
         if(fp == NULL){
                 printf("Fichier non trouver, ou acces non permis.\n");
         }
 
         fseek(fp, 0, SEEK_SET); // on passe le cursor
-
-        fwrite(&cursor, sizeof(cursor), 1, fp);
+	
+	fwrite(&cursor, sizeof(cursor), 1, fp);
 
         fclose(fp);
 };
@@ -216,8 +219,10 @@ unsigned long long file_exist(char arg_type_file, char * arg_file_name){
         return 0;
 }
 
-void put_file(char * path_filename, unsigned long long cursor_stock, unsigned long long * file_size){
-        /*
+void put_file(char * path_filename, unsigned long long *file_size, unsigned long long num_rank, unsigned long long * cursor_stock){
+	int tag = 0;	
+	MPI_Status status;        
+	/*
            fonction, prennant un fichier sur le systeme hôte et le met dans le filesystem.
            écris dans stockage.jjg a partir du cursor_stock
          */
@@ -229,52 +234,80 @@ void put_file(char * path_filename, unsigned long long cursor_stock, unsigned lo
         size_src = ftell(fp_src);
         (*file_size) = size_src; // on transmet la taille du fichier
 
-        // on ouvre le fichier stockage en écriture
-        FILE *fp_dest = fopen(FILE_STOCK, "r+");
-
-        // on prend le contenue du fichier et on le stock dans le fichier stockage
-        // on regarde combien de bit il faut copier
-        char tmp[1024];
-        unsigned long long tmp_size_src = size_src; // compteur
-        int tmp_size; // retiens combien de char on copieras
-        fseek(fp_dest, cursor_stock, SEEK_SET);
-        fseek(fp_src, 0, SEEK_SET);
-        while(tmp_size_src > 0){
-                if(tmp_size_src > 1024){
-                        tmp_size = 1024;
-                        tmp_size_src -= 1024;
-                } else {
-                        tmp_size = (int) tmp_size_src;
-                        tmp_size_src =0;
-                }
-
-                fread(tmp, sizeof(char) * tmp_size, 1, fp_src);
-                fwrite(tmp, sizeof(char) * tmp_size, 1, fp_dest);
-        }
-
-        // on met a jour le curseur
-        set_stock_last_cursor( cursor_stock + size_src);
-
-        fclose(fp_src);
-        fclose(fp_dest);
-}
-
-void extract_file(char * path_filename, unsigned long long cursor_stock, unsigned long long file_size){
-	/*
-		fonction qui prend une partie du fichier stockage, et la met dans le fichier du systeme hôte
-	*/	
-	// on lis l'info dans stockage.jjg
-	FILE *fp_src = fopen(FILE_STOCK, "r");
-	fseek(fp_src, cursor_stock, SEEK_SET);
-	char buffer[file_size];
-	fread(buffer, sizeof(buffer), 1, fp_src);
+	// Lecture du fichier dans /SWP/
+	char file_content[size_src];
+	file_content[0] = '\0';
+	fseek(fp_src, 0, SEEK_SET);
+	fread(file_content, sizeof(char) * size_src, 1, fp_src);
 	fclose(fp_src);
 
-	// on écris l'info dans le fichier path_filename
-	FILE *fp_dest = fopen(path_filename, "r+");
-	fseek(fp_dest, 0, SEEK_SET);
-	fwrite(buffer, sizeof(buffer), 1, fp_dest);
-	fclose(fp_dest);
+	if( size_src > 0 ){
+		int type_commande = 2;
+
+		MPI_Send( &type_commande, 1, MPI_INT, num_rank, tag, MPI_COMM_WORLD);
+
+		int res_type_commande = 0;
+		MPI_Recv( &res_type_commande, 1, MPI_INT, num_rank, tag, MPI_COMM_WORLD, &status );
+
+		if( res_type_commande > 0 ){
+
+			// On envoie la taille du fichier
+			MPI_Send( &size_src, 1, MPI_UNSIGNED_LONG, num_rank, tag, MPI_COMM_WORLD );
+
+			// On envoie le contenu du fichier
+			MPI_Send( &file_content, size_src, MPI_CHAR, num_rank, tag, MPI_COMM_WORLD );
+
+			unsigned long long int new_cursor_stock;
+			// récéption de la nouvelle valeur de fin de fichier
+			MPI_Recv( &new_cursor_stock, 1, MPI_UNSIGNED_LONG_LONG, num_rank, tag, MPI_COMM_WORLD, &status );
+			(*cursor_stock)=new_cursor_stock;
+		}
+	}
+}
+
+void extract_file(char * path_filename, unsigned long long cursor_stock, unsigned long long file_size, unsigned long long num_rank){
+	int tag = 0;	
+	MPI_Status status[4];
+	/*
+		fonction qui prend une partie du fichier stockage, et la met dans le fichier du systeme hôte
+	*/
+	/*	
+		// on lis l'info dans stockage.jjg => seulement en séquentiel
+		FILE *fp_src = fopen(FILE_STOCK, "r");
+		fseek(fp_src, cursor_stock, SEEK_SET);
+		char buffer[file_size];
+		fread(buffer, sizeof(buffer), 1, fp_src);
+		fclose(fp_src);
+	*/
+	if( file_size != 0 ){
+		int type_commande = 1;
+
+		MPI_Send( &type_commande, 1, MPI_INT, num_rank, tag, MPI_COMM_WORLD);
+
+		int res_type_commande = 0;
+		MPI_Recv( &res_type_commande, 1, MPI_INT, num_rank, tag, MPI_COMM_WORLD, &status[0] );
+
+		if( res_type_commande > 0 ){
+
+			// données pour la lecture de fichier
+			unsigned long long int param_commande_get[2];
+			param_commande_get[ 0 ] = cursor_stock;
+			param_commande_get[ 1 ] = file_size;
+
+			// on attend la position du fichier et sa taille
+			MPI_Send( param_commande_get, 2, MPI_UNSIGNED_LONG_LONG, num_rank, tag, MPI_COMM_WORLD );
+
+			// récupération du contenu du fichier
+			char buffer[file_size];
+			MPI_Recv( buffer, file_size, MPI_CHAR, num_rank,tag, MPI_COMM_WORLD, &status[0] );
+
+			// on écris l'info dans le fichier path_filename
+			FILE *fp_dest = fopen(path_filename, "r+");
+			fseek(fp_dest, 0, SEEK_SET);
+			fwrite(buffer, sizeof(buffer), 1, fp_dest);
+			fclose(fp_dest);
+		}
+	}
 }
 
 
@@ -297,7 +330,7 @@ void ajouterLigne(unsigned long long cursor, char active, unsigned long long par
         if(file_type == FICHIER){
         	fwrite(&file_cursor_stock, sizeof(file_cursor_stock), 1, fp);
         	fwrite(&file_size, sizeof(file_size), 1, fp);
-		fwrite(&machine, sizeof(machine), 1, fp);
+        	fwrite(&machine, sizeof(machine), 1, fp);
         }
 
         fclose(fp);
@@ -379,7 +412,7 @@ void supprimerDossier(char * path, unsigned long long parent){
 			supprimerLigne(cursor);
 			
 		} else {
-			supprimerDossier(file_name, parent_tmp);
+			supprimerDossier(file_name, cursor);
 		}
 	}
 

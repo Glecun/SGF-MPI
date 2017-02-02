@@ -21,6 +21,8 @@ void cmd_ls(char ** s_c);
 
 void cmd_touch(char ** s_c);
 
+void cmd_help();
+
 /** Commande Rm (et tout autre commande de suppression plus généralement)
 */
 //char* cmd_rm(char* cmd);
